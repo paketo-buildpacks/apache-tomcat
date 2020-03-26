@@ -64,9 +64,9 @@ stacks  = [ "io.buildpacks.stacks.bionic" ]
 [[metadata.dependencies]]
 id      = "tomcat-access-logging-support"
 name    = "Apache Tomcat Access Logging Support"
-version = "0.0.0"
-uri     = "placeholder"
-sha256  = "placeholder"
+version = "3.3.0"
+uri     = "https://repo.spring.io/release/org/cloudfoundry/tomcat-access-logging-support/3.3.0.RELEASE/tomcat-access-logging-support-3.3.0.RELEASE.jar"
+sha256  = "49f9acac1bed65c683276d662c985ed63c685a603e7f5b72f732673bb826a0d4"
 stacks  = [ "io.buildpacks.stacks.bionic" ]
 
   [[metadata.dependencies.licenses]]
