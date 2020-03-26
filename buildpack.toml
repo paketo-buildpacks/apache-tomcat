@@ -52,9 +52,9 @@ stacks  = [ "io.buildpacks.stacks.bionic" ]
 [[metadata.dependencies]]
 id      = "tomcat"
 name    = "Apache Tomcat"
-version = "9.0.0"
-uri     = "placeholder"
-sha256  = "placeholder"
+version = "9.0.33"
+uri     = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.33/bin/apache-tomcat-9.0.33.tar.gz"
+sha256  = "d5cd9463492f4552229295a9a8c00615748f85e9de36434847d495e95b0ef796"
 stacks  = [ "io.buildpacks.stacks.bionic" ]
 
   [[metadata.dependencies.licenses]]
