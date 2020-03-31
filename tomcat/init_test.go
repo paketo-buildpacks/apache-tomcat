@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package main
+package tomcat_test
 
 import (
-	"os"
+	"testing"
 
-	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
-	"github.com/paketo-buildpacks/libpak"
-	"github.com/paketo-buildpacks/libpak/bard"
+	"github.com/sclevine/spec"
+	"github.com/sclevine/spec/report"
 )
 
-func main() {
-	libpak.Build(tomcat.Build{Logger: bard.NewLogger(os.Stdout)})
+func TestUnit(t *testing.T) {
+	suite := spec.New("tomcat", spec.Report(report.Terminal{}))
+	suite("Base", testBase)
+	suite("Build", testBuild)
+	suite("Detect", testDetect)
+	suite("Home", testHome)
+	suite.Run(t)
 }

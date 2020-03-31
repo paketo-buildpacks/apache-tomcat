@@ -16,5 +16,11 @@
 
 package main
 
+import (
+	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
+	"github.com/paketo-buildpacks/libpak"
+)
+
 func main() {
+	libpak.Detect(tomcat.Detect{})
 }
