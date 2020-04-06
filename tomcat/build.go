@@ -43,7 +43,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_CONTEXT_PATH", "the application context path", "ROOT"))
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_SHA256", "the SHA256 hash of the external Tomcat configuration archive", "<none>"))
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_STRIP", "the number of directory components to strip from the external Tomcat configuration archive", "0"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_URI", "the download external Tomcat configuration location", "<none>"))
+	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_URI", "the download location of the external Tomcat configuration", "<none>"))
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_VERSION", "the version of the external Tomcat configuration", "<none>"))
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_VERSION", "the Tomcat version", "9.*"))
 	b.Logger.Body(bard.FormatUserConfig("BPL_TOMCAT_ACCESS_LOGGING", "the Tomcat access logging state", "disabled"))
