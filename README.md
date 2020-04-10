@@ -2,7 +2,7 @@
 The Paketo Apache Tomcat Buildpack is a Cloud Native Buildpack that contributes Apache Tomcat and Process Types for WARs.
 
 ## Behavior
-This buildpack will participate all of the following conditions are met
+This buildpack will participate all the following conditions are met
 
 * `<APPLICATION_ROOT>/WEB-INF` exists
 
