@@ -22,6 +22,9 @@ version = "{{.version}}"
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"
 
+[[stacks]]
+id = "org.cloudfoundry.stacks.cflinuxfs3"
+
 [metadata.default-versions]
 tomcat = "9.*"
 
@@ -31,7 +34,7 @@ name    = "Apache Tomcat"
 version = "7.0.103"
 uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.103/bin/apache-tomcat-7.0.103.tar.gz"
 sha256  = "121dcefa2312ec77cd1ef27b085f4b3c913cde7ee67470d582154d845fd94754"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
@@ -43,7 +46,7 @@ name    = "Apache Tomcat"
 version = "8.5.54"
 uri     = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.54/bin/apache-tomcat-8.5.54.tar.gz"
 sha256  = "44bd3f8d13983349bab102a3d03b67ac4bf5d073afc2d16e3339c3d88f4b92d9"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
@@ -55,7 +58,7 @@ name    = "Apache Tomcat"
 version = "9.0.34"
 uri     = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz"
 sha256  = "321de5b18a48ec09d2963d9faba4bfeafc7dd2203d80a2ef7e7a20b159e2120a"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
@@ -67,7 +70,7 @@ name    = "Apache Tomcat Access Logging Support"
 version = "3.3.0"
 uri     = "https://repo.spring.io/release/org/cloudfoundry/tomcat-access-logging-support/3.3.0.RELEASE/tomcat-access-logging-support-3.3.0.RELEASE.jar"
 sha256  = "49f9acac1bed65c683276d662c985ed63c685a603e7f5b72f732673bb826a0d4"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
@@ -79,7 +82,7 @@ name    = "Apache Tomcat Lifecycle Support"
 version = "3.3.0"
 uri     = "https://repo.spring.io/release/org/cloudfoundry/tomcat-lifecycle-support/3.3.0.RELEASE/tomcat-lifecycle-support-3.3.0.RELEASE.jar"
 sha256  = "b725f4cae0be4a999a08ed978b29081edfd68a187a926ed740cc1f8e9aca70ce"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
@@ -91,7 +94,7 @@ name    = "Apache Tomcat Logging Support"
 version = "3.3.0"
 uri     = "https://repo.spring.io/release/org/cloudfoundry/tomcat-logging-support/3.3.0.RELEASE/tomcat-logging-support-3.3.0.RELEASE.jar"
 sha256  = "46db58c1d8ef2555d7053a12d669daefb676e9a17a2a1771cd60c95bcb210b0d"
-stacks  = [ "io.buildpacks.stacks.bionic" ]
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
