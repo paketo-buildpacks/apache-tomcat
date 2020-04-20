@@ -48,14 +48,14 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_VERSION", "the Tomcat version", "9.*"))
 	b.Logger.Body(bard.FormatUserConfig("BPL_TOMCAT_ACCESS_LOGGING", "the Tomcat access logging state", "disabled"))
 
+	result := libcnb.NewBuildResult()
+
 	command := "catalina.sh run"
-	result := libcnb.BuildResult{
-		Processes: []libcnb.Process{
-			{Type: "task", Command: command},
-			{Type: "tomcat", Command: command},
-			{Type: "web", Command: command},
-		},
-	}
+	result.Processes = append(result.Processes,
+		libcnb.Process{Type: "task", Command: command},
+		libcnb.Process{Type: "tomcat", Command: command},
+		libcnb.Process{Type: "web", Command: command},
+	)
 
 	md, err := libpak.NewBuildpackMetadata(context.Buildpack.Metadata)
 	if err != nil {
@@ -79,7 +79,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 	}
 
-	home := NewHome(tomcatDep, dc, &result.Plan)
+	home := NewHome(tomcatDep, dc, result.Plan)
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
 
@@ -111,7 +111,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	}
 
 	base := NewBase(context.Application.Path, context.Buildpack.Path, b.ContextPath(), accessLoggingDependency,
-		externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, &result.Plan)
+		externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, result.Plan)
 
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)
