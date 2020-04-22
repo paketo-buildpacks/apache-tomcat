@@ -15,9 +15,10 @@
 api = "0.2"
 
 [buildpack]
-id      = "paketo-buildpacks/apache-tomcat"
-name    = "Paketo Apache Tomcat Buildpack"
-version = "{{.version}}"
+id       = "paketo-buildpacks/apache-tomcat"
+name     = "Paketo Apache Tomcat Buildpack"
+version  = "{{.version}}"
+homepage = "https://github.com/paketo-buildpacks/apache-tomcat"
 
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"
