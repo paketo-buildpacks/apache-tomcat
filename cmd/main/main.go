@@ -25,5 +25,8 @@ import (
 )
 
 func main() {
-	libpak.Build(tomcat.Build{Logger: bard.NewLogger(os.Stdout)})
+	libpak.Main(
+		tomcat.Detect{},
+		tomcat.Build{Logger: bard.NewLogger(os.Stdout)},
+	)
 }
