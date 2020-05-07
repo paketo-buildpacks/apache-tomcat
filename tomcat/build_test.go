@@ -197,7 +197,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("returns default context path", func() {
-		Expect(tomcat.Build{}.ContextPath()).To(Equal("ROOT"))
+		Expect(tomcat.Build{}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("ROOT"))
 	})
 
 	context("$BP_TOMCAT_CONTEXT_PATH", func() {
@@ -210,7 +210,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("returns transformed context path", func() {
-			Expect(tomcat.Build{}.ContextPath()).To(Equal("alpha#bravo"))
+			Expect(tomcat.Build{}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("alpha#bravo"))
 		})
 	})
 }

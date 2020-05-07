@@ -40,14 +40,6 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	}
 
 	b.Logger.Title(context.Buildpack)
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_CONTEXT_PATH", "the application context path", "ROOT"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_SHA256", "the SHA256 hash of the external Tomcat configuration archive", "<none>"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_STRIP", "the number of directory components to strip from the external Tomcat configuration archive", "0"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_URI", "the download location of the external Tomcat configuration", "<none>"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_EXT_CONF_VERSION", "the version of the external Tomcat configuration", "<none>"))
-	b.Logger.Body(bard.FormatUserConfig("BP_TOMCAT_VERSION", "the Tomcat version", "9.*"))
-	b.Logger.Body(bard.FormatUserConfig("BPL_TOMCAT_ACCESS_LOGGING", "the Tomcat access logging state", "disabled"))
-
 	result := libcnb.NewBuildResult()
 
 	command := "catalina.sh run"
@@ -57,9 +49,9 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		libcnb.Process{Type: "web", Command: command},
 	)
 
-	md, err := libpak.NewBuildpackMetadata(context.Buildpack.Metadata)
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
 	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to unmarshal buildpack metadata\n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
 	}
 
 	dr, err := libpak.NewDependencyResolver(context)
@@ -70,10 +62,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	dc := libpak.NewDependencyCache(context.Buildpack)
 	dc.Logger = b.Logger
 
-	v := md.DefaultVersions["tomcat"]
-	if s, ok := os.LookupEnv("BP_TOMCAT_VERSION"); ok {
-		v = s
-	}
+	v, _ := cr.Resolve("BP_TOMCAT_VERSION")
 	tomcatDep, err := dr.Resolve("tomcat", v)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
@@ -99,7 +88,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	}
 
 	var externalConfigurationDependency *libpak.BuildpackDependency
-	if uri, ok := os.LookupEnv("BP_TOMCAT_EXT_CONF_URI"); ok {
+	if uri, ok := cr.Resolve("BP_TOMCAT_EXT_CONF_URI"); ok {
 		externalConfigurationDependency = &libpak.BuildpackDependency{
 			ID:      "tomcat-external-configuration",
 			Name:    "Tomcat External Configuration",
@@ -110,7 +99,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		}
 	}
 
-	base := NewBase(context.Application.Path, context.Buildpack.Path, b.ContextPath(), accessLoggingDependency,
+	base := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency,
 		externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, result.Plan)
 
 	base.Logger = b.Logger
@@ -119,9 +108,9 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	return result, nil
 }
 
-func (Build) ContextPath() string {
+func (Build) ContextPath(configurationResolver libpak.ConfigurationResolver) string {
 	cp := "ROOT"
-	if s, ok := os.LookupEnv("BP_TOMCAT_CONTEXT_PATH"); ok {
+	if s, ok := configurationResolver.Resolve("BP_TOMCAT_CONTEXT_PATH"); ok {
 		cp = s
 	}
 	cp = strings.TrimPrefix(cp, "/")

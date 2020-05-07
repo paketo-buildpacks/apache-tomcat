@@ -26,8 +26,36 @@ id = "io.buildpacks.stacks.bionic"
 [[stacks]]
 id = "org.cloudfoundry.stacks.cflinuxfs3"
 
-[metadata.default-versions]
-tomcat = "9.*"
+[[metadata.configurations]]
+name        = "BPL_TOMCAT_ACCESS_LOGGING"
+description = "the Tomcat access logging state"
+default     = "disabled"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_CONTEXT_PATH"
+description = "the application context path"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_EXT_CONF_SHA256"
+description = "the SHA256 hash of the external Tomcat configuration archive"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_EXT_CONF_STRIP"
+description = "the number of directory components to strip from the external Tomcat configuration archive"
+default     = "0"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_EXT_CONF_URI"
+description = "the download location of the external Tomcat configuration"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_EXT_CONF_VERSION"
+description = "the version of the external Tomcat configuration"
+
+[[metadata.configurations]]
+name        = "BP_TOMCAT_VERSION"
+description = "the Tomcat version"
+default     = "9.*"
 
 [[metadata.dependencies]]
 id      = "tomcat"

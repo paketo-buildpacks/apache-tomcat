@@ -84,8 +84,8 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		plan := libcnb.BuildpackPlan{}
 
-		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, "test-context-path", accessLoggingDep, nil,
-			lifecycleDep, loggingDep, dc, &plan)
+		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
+			accessLoggingDep, nil, lifecycleDep, loggingDep, dc, &plan)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -159,8 +159,8 @@ CLASSPATH="%s"
 
 		plan := libcnb.BuildpackPlan{}
 
-		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, "test-context-path", accessLoggingDep,
-			&externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
+		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
+			accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -213,8 +213,8 @@ CLASSPATH="%s"
 
 			plan := libcnb.BuildpackPlan{}
 
-			b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, "test-context-path", accessLoggingDep,
-				&externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
+			b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
+				accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
 			layer, err := ctx.Layers.Layer("test-layer")
 			Expect(err).NotTo(HaveOccurred())
 
