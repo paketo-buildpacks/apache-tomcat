@@ -89,12 +89,15 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 	var externalConfigurationDependency *libpak.BuildpackDependency
 	if uri, ok := cr.Resolve("BP_TOMCAT_EXT_CONF_URI"); ok {
+		v, _ := cr.Resolve("BP_TOMCAT_EXT_CONF_VERSION")
+		s, _ := cr.Resolve("BP_TOMCAT_EXT_CONF_SHA256")
+
 		externalConfigurationDependency = &libpak.BuildpackDependency{
 			ID:      "tomcat-external-configuration",
 			Name:    "Tomcat External Configuration",
-			Version: os.Getenv("BP_TOMCAT_EXT_CONF_VERSION"),
+			Version: v,
 			URI:     uri,
-			SHA256:  os.Getenv("BP_TOMCAT_EXT_CONF_SHA256"),
+			SHA256:  s,
 			Stacks:  []string{context.StackID},
 		}
 	}
