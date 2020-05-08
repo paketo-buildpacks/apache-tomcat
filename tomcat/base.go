@@ -46,31 +46,18 @@ type Base struct {
 	Logger                          bard.Logger
 }
 
-type Metadata struct {
-	ContextPath  string                       `mapstructure:"context-path"`
-	Dependencies []libpak.BuildpackDependency `mapstructure:"dependencies"`
-}
-
 func NewBase(applicationPath string, buildpackPath string, configurationResolver libpak.ConfigurationResolver,
 	contextPath string, accessLoggingDependency libpak.BuildpackDependency,
 	externalConfigurationDependency *libpak.BuildpackDependency, lifecycleDependency libpak.BuildpackDependency,
 	loggingDependency libpak.BuildpackDependency, cache libpak.DependencyCache, plan *libcnb.BuildpackPlan) Base {
 
-	expected := Metadata{
-		ContextPath: contextPath,
-		Dependencies: []libpak.BuildpackDependency{
-			accessLoggingDependency,
-			lifecycleDependency,
-			loggingDependency,
-		},
-	}
-
+	dependencies := []libpak.BuildpackDependency{accessLoggingDependency, lifecycleDependency, loggingDependency}
 	plan.Entries = append(plan.Entries, accessLoggingDependency.AsBuildpackPlanEntry())
 	plan.Entries = append(plan.Entries, lifecycleDependency.AsBuildpackPlanEntry())
 	plan.Entries = append(plan.Entries, loggingDependency.AsBuildpackPlanEntry())
 
 	if externalConfigurationDependency != nil {
-		expected.Dependencies = append(expected.Dependencies, *externalConfigurationDependency)
+		dependencies = append(dependencies, *externalConfigurationDependency)
 
 		plan.Entries = append(plan.Entries, externalConfigurationDependency.AsBuildpackPlanEntry())
 	}
@@ -83,9 +70,12 @@ func NewBase(applicationPath string, buildpackPath string, configurationResolver
 		ContextPath:                     contextPath,
 		DependencyCache:                 cache,
 		ExternalConfigurationDependency: externalConfigurationDependency,
-		LayerContributor:                libpak.NewLayerContributor("Apache Tomcat Support", expected),
-		LifecycleDependency:             lifecycleDependency,
-		LoggingDependency:               loggingDependency,
+		LayerContributor: libpak.NewLayerContributor("Apache Tomcat Support", map[string]interface{}{
+			"context-path": contextPath,
+			"dependencies": dependencies,
+		}),
+		LifecycleDependency: lifecycleDependency,
+		LoggingDependency:   loggingDependency,
 	}
 
 	return b
