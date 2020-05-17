@@ -60,9 +60,9 @@ default     = "9.*"
 [[metadata.dependencies]]
 id      = "tomcat"
 name    = "Apache Tomcat"
-version = "7.0.103"
-uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.103/bin/apache-tomcat-7.0.103.tar.gz"
-sha256  = "121dcefa2312ec77cd1ef27b085f4b3c913cde7ee67470d582154d845fd94754"
+version = "7.0.104"
+uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.104/bin/apache-tomcat-7.0.104.tar.gz"
+sha256  = "0cbc72a05f62978e0b78ce4acf1bb7aa720bfbbabc8a11e11930d73285aea73e"
 stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
