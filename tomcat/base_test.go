@@ -110,6 +110,15 @@ printf "Tomcat Access Logging enabled\n"
 
 export JAVA_OPTS="${JAVA_OPTS} -Daccess.logging.enabled=true"
 `))
+		libDir := filepath.Join(layer.Path, "lib")
+		Expect(layer.Profile["add-classpath-entries.sh"]).To(Equal(fmt.Sprintf(`#!/bin/sh
+
+mkdir -p "%[1]s"
+while IFS=: read -d: -r path; do
+    printf "Linking $path to '%[1]v/$(basename $path)'\n"
+    ln -s "$path" "%[1]s/$(basename $path)"
+done <<< "${CLASSPATH}"
+`, libDir)))
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-lifecycle-support.jar")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")).To(BeARegularFile())
 		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal([]byte(fmt.Sprintf(`# shellcheck disable=SC2034
