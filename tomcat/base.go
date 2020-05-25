@@ -301,7 +301,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 func (b Base) ContributeClasspathEntries(layer libcnb.Layer) error {
 	b.Logger.Bodyf("Adding profile-script 'add-classpath-entries.sh'")
 
-	libDir := fmt.Sprintf("%s/lib", layer.Path)
+	libDir := filepath.Join(layer.Path, "lib")
 	s, err := sherpa.TemplateFile("/add-classpath-entries.sh", map[string]interface{}{"libDir": libDir})
 	if err != nil {
 		return fmt.Errorf("unable to load add-classpath-entries.sh\n%w", err)

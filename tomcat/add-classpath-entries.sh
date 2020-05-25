@@ -1,7 +1,10 @@
 #!/bin/sh
-
+set -e
 mkdir -p "{{.libDir}}"
-while IFS=: read -d: -r path; do
-    printf "Linking $path to '{{.libDir}}/$(basename $path)'\n"
-    ln -s "$path" "{{.libDir}}/$(basename $path)"
-done <<< "${CLASSPATH}"
+(
+    IFS=:
+    for path in $(printf '%s' "$CLASSPATH"); do
+        printf "Linking %s to '{{.libDir}}/$(basename "$path")'\n" "$path"
+        ln -s "$path" "{{.libDir}}/$(basename "$path")"
+    done
+)
