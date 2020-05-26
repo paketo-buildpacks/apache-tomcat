@@ -162,6 +162,18 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 	return nil
 }
 
+func (b Base) ContributeClasspathEntries(layer libcnb.Layer) error {
+	file := filepath.Join(layer.Path, "lib")
+	s, err := sherpa.TemplateFile("/classpath.sh", map[string]interface{}{"path": file})
+	if err != nil {
+		return fmt.Errorf("unable to load classpath.sh\n%w", err)
+	}
+
+	layer.Profile.Add("classpath.sh", s)
+
+	return nil
+}
+
 func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	file := filepath.Join(layer.Path, "conf")
 	if err := os.MkdirAll(file, 0755); err != nil {
@@ -295,19 +307,6 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 		return fmt.Errorf("unable to write file %s\n%w", file, err)
 	}
 
-	return nil
-}
-
-func (b Base) ContributeClasspathEntries(layer libcnb.Layer) error {
-	b.Logger.Bodyf("Adding profile-script 'add-classpath-entries.sh'")
-
-	libDir := filepath.Join(layer.Path, "lib")
-	s, err := sherpa.TemplateFile("/add-classpath-entries.sh", map[string]interface{}{"libDir": libDir})
-	if err != nil {
-		return fmt.Errorf("unable to load add-classpath-entries.sh\n%w", err)
-	}
-
-	layer.Profile.Add("add-classpath-entries.sh", s)
 	return nil
 }
 

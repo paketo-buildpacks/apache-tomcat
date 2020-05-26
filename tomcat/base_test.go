@@ -110,18 +110,14 @@ printf "Tomcat Access Logging enabled\n"
 
 export JAVA_OPTS="${JAVA_OPTS} -Daccess.logging.enabled=true"
 `))
-		libDir := filepath.Join(layer.Path, "lib")
-		Expect(layer.Profile["add-classpath-entries.sh"]).To(Equal(fmt.Sprintf(`#!/bin/sh
-set -e
+		Expect(layer.Profile["classpath.sh"]).To(Equal(fmt.Sprintf(`[[ -z "${CLASSPATH+x}" ]] && return
+
+printf "Linking \${CLASSPATH} entries to %%s\n" "%[1]s"
+
 mkdir -p "%[1]s"
-(
-    IFS=:
-    for path in $(printf '%%s' "$CLASSPATH"); do
-        printf "Linking %%s to '%[1]s/$(basename "$path")'\n" "$path"
-        ln -s "$path" "%[1]s/$(basename "$path")"
-    done
-)
-`, libDir)))
+IFS=':' read -ra PATHS <<< "${CLASSPATH}"
+ln -s "${PATHS[@]}" "%[1]s"
+`, filepath.Join(layer.Path, "lib"))))
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-lifecycle-support.jar")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")).To(BeARegularFile())
 		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal([]byte(fmt.Sprintf(`# shellcheck disable=SC2034
