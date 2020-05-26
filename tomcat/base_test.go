@@ -110,7 +110,7 @@ printf "Tomcat Access Logging enabled\n"
 
 export JAVA_OPTS="${JAVA_OPTS} -Daccess.logging.enabled=true"
 `))
-		Expect(layer.Profile["classpath.sh"]).To(Equal(fmt.Sprintf(`[[ -z "${CLASSPATH+x}" ]] && return
+		Expect(layer.Profile["classpath.sh"]).To(Equal(fmt.Sprintf(`[[ -z "${CLASSPATH}" ]] && return
 
 printf "Linking \${CLASSPATH} entries to %%s\n" "%[1]s"
 

@@ -1,4 +1,4 @@
-[[ -z "${CLASSPATH+x}" ]] && return
+[[ -z "${CLASSPATH}" ]] && return
 
 printf "Linking \${CLASSPATH} entries to %s\n" "{{.path}}"
 
