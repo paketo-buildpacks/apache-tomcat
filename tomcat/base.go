@@ -103,6 +103,10 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute logging\n%w", err)
 		}
 
+		if err := b.ContributeClasspathEntries(layer); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to contribute classpath entries\n%w", err)
+		}
+
 		if b.ExternalConfigurationDependency != nil {
 			if err := b.ContributeExternalConfiguration(layer); err != nil {
 				return libcnb.Layer{}, fmt.Errorf("unable to contribute external configuration\n%w", err)
@@ -154,6 +158,18 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 	}
 
 	layer.Profile.Add("access-logging-support.sh", s)
+
+	return nil
+}
+
+func (b Base) ContributeClasspathEntries(layer libcnb.Layer) error {
+	file := filepath.Join(layer.Path, "lib")
+	s, err := sherpa.TemplateFile("/classpath.sh", map[string]interface{}{"path": file})
+	if err != nil {
+		return fmt.Errorf("unable to load classpath.sh\n%w", err)
+	}
+
+	layer.Profile.Add("classpath.sh", s)
 
 	return nil
 }
