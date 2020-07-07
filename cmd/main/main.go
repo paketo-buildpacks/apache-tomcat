@@ -19,9 +19,10 @@ package main
 import (
 	"os"
 
-	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
+
+	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
 )
 
 func main() {

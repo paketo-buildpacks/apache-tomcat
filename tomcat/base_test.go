@@ -25,9 +25,10 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/sclevine/spec"
+
+	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
 )
 
 func testBase(t *testing.T, context spec.G, it spec.S) {

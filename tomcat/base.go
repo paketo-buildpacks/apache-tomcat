@@ -25,11 +25,12 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	"github.com/heroku/color"
-	_ "github.com/paketo-buildpacks/apache-tomcat/tomcat/statik"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/paketo-buildpacks/libpak/sherpa"
+
+	_ "github.com/paketo-buildpacks/apache-tomcat/tomcat/statik"
 )
 
 type Base struct {
