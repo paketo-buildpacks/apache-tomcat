@@ -67,9 +67,9 @@ build       = true
 [[metadata.dependencies]]
 id      = "tomcat"
 name    = "Apache Tomcat"
-version = "7.0.104"
-uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.104/bin/apache-tomcat-7.0.104.tar.gz"
-sha256  = "0cbc72a05f62978e0b78ce4acf1bb7aa720bfbbabc8a11e11930d73285aea73e"
+version = "7.0.105"
+uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.105/bin/apache-tomcat-7.0.105.tar.gz"
+sha256  = "1a36882b5e25fff4f5d8c10e4029f29e43b1db96e0df03bdbed1fa913038392f"
 stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
