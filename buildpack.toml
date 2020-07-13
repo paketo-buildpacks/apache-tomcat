@@ -110,7 +110,7 @@ stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" 
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
-  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/master/LICENSE"
+  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
 
 [[metadata.dependencies]]
 id      = "tomcat-lifecycle-support"
@@ -122,7 +122,7 @@ stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" 
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
-  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/master/LICENSE"
+  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
 
 [[metadata.dependencies]]
 id      = "tomcat-logging-support"
@@ -134,7 +134,7 @@ stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" 
 
   [[metadata.dependencies.licenses]]
   type = "Apache-2.0"
-  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/master/LICENSE"
+  uri  = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
 
 [metadata]
 pre-package   = "scripts/build.sh"
