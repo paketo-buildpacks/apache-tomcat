@@ -43,6 +43,14 @@ The artifacts that the repository provides must be in TAR format and must follow
     ├── ...
 ```
 
+## Bindings
+The buildpack optionally accepts the following bindings:
+
+### Type: `dependency-mapping`
+|Key                   | Value   | Description
+|----------------------|---------|------------
+|`<dependency-digest>` | `<uri>` | If needed, the buildpack will fetch the dependency with digest `<dependency-digest>` from `<uri>`
+
 ## License
 This buildpack is released under version 2.0 of the [Apache License][a].
 
