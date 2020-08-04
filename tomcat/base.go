@@ -53,14 +53,8 @@ func NewBase(applicationPath string, buildpackPath string, configurationResolver
 	loggingDependency libpak.BuildpackDependency, cache libpak.DependencyCache, plan *libcnb.BuildpackPlan) Base {
 
 	dependencies := []libpak.BuildpackDependency{accessLoggingDependency, lifecycleDependency, loggingDependency}
-	plan.Entries = append(plan.Entries, accessLoggingDependency.AsBuildpackPlanEntry())
-	plan.Entries = append(plan.Entries, lifecycleDependency.AsBuildpackPlanEntry())
-	plan.Entries = append(plan.Entries, loggingDependency.AsBuildpackPlanEntry())
-
 	if externalConfigurationDependency != nil {
 		dependencies = append(dependencies, *externalConfigurationDependency)
-
-		plan.Entries = append(plan.Entries, externalConfigurationDependency.AsBuildpackPlanEntry())
 	}
 
 	b := Base{
@@ -78,6 +72,25 @@ func NewBase(applicationPath string, buildpackPath string, configurationResolver
 		LifecycleDependency: lifecycleDependency,
 		LoggingDependency:   loggingDependency,
 	}
+
+	entry := accessLoggingDependency.AsBuildpackPlanEntry()
+	entry.Metadata["launch"] = b.Name()
+	plan.Entries = append(plan.Entries, entry)
+
+	entry = lifecycleDependency.AsBuildpackPlanEntry()
+	entry.Metadata["launch"] = b.Name()
+	plan.Entries = append(plan.Entries, entry)
+
+	entry = loggingDependency.AsBuildpackPlanEntry()
+	entry.Metadata["launch"] = b.Name()
+	plan.Entries = append(plan.Entries, entry)
+
+	if externalConfigurationDependency != nil {
+		entry = externalConfigurationDependency.AsBuildpackPlanEntry()
+		entry.Metadata["launch"] = b.Name()
+		plan.Entries = append(plan.Entries, entry)
+	}
+
 
 	return b
 }

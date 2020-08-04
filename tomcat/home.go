@@ -51,6 +51,6 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	})
 }
 
-func (Home) Name() string {
-	return "catalina-home"
+func (h Home) Name() string {
+	return h.LayerContributor.LayerName()
 }

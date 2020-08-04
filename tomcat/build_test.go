@@ -87,7 +87,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		))
 
 		Expect(result.Layers).To(HaveLen(2))
-		Expect(result.Layers[0].Name()).To(Equal("catalina-home"))
+		Expect(result.Layers[0].Name()).To(Equal("tomcat"))
 		Expect(result.Layers[1].Name()).To(Equal("catalina-base"))
 	})
 
