@@ -109,7 +109,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 printf "Tomcat Access Logging enabled\n"
 
-export JAVA_OPTS="${JAVA_OPTS} -Daccess.logging.enabled=true"
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Daccess.logging.enabled=true"
 `))
 		Expect(layer.Profile["classpath.sh"]).To(Equal(fmt.Sprintf(`[[ -z "${CLASSPATH}" ]] && return
 
