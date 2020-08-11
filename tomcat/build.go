@@ -42,11 +42,12 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	b.Logger.Title(context.Buildpack)
 	result := libcnb.NewBuildResult()
 
-	command := "catalina.sh run"
+	command := "catalina.sh"
+	arguments := []string{"run"}
 	result.Processes = append(result.Processes,
-		libcnb.Process{Type: "task", Command: command},
-		libcnb.Process{Type: "tomcat", Command: command},
-		libcnb.Process{Type: "web", Command: command},
+		libcnb.Process{Type: "task", Command: command, Arguments: arguments},
+		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments},
+		libcnb.Process{Type: "web", Command: command, Arguments: arguments},
 	)
 
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)

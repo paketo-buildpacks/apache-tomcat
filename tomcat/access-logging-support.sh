@@ -4,4 +4,4 @@ ENABLED=${BPL_TOMCAT_ACCESS_LOGGING:=n}
 
 printf "Tomcat Access Logging enabled\n"
 
-export JAVA_OPTS="${JAVA_OPTS} -Daccess.logging.enabled=true"
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Daccess.logging.enabled=true"
