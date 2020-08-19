@@ -143,7 +143,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to create symlink from %s to %s\n%w", b.ApplicationPath, file, err)
 		}
 
-		layer.LaunchEnvironment.Override("CATALINA_BASE", layer.Path)
+		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
 
 		layer.Launch = true
 		return layer, nil

@@ -124,7 +124,7 @@ ln -s "${PATHS[@]}" "%[1]s"
 		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal([]byte(fmt.Sprintf(`# shellcheck disable=SC2034
 CLASSPATH="%s"
 `, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")))))
-		Expect(layer.LaunchEnvironment["CATALINA_BASE.override"]).To(Equal(layer.Path))
+		Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
 		Expect(filepath.Join(layer.Path, "temp")).To(BeADirectory())
 
 		file := filepath.Join(layer.Path, "webapps", "test-context-path")
@@ -133,7 +133,7 @@ CLASSPATH="%s"
 		Expect(fi.Mode() & os.ModeSymlink).To(Equal(os.ModeSymlink))
 		Expect(os.Readlink(file)).To(Equal(ctx.Application.Path))
 
-		Expect(layer.LaunchEnvironment["CATALINA_BASE.override"]).To(Equal(layer.Path))
+		Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
 	})
 
 	it("contributes custom configuration", func() {

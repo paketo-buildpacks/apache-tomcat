@@ -44,7 +44,7 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to expand Tomcat\n%w", err)
 		}
 
-		layer.LaunchEnvironment.Override("CATALINA_HOME", layer.Path)
+		layer.LaunchEnvironment.Default("CATALINA_HOME", layer.Path)
 
 		layer.Launch = true
 		return layer, nil

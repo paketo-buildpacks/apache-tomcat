@@ -64,6 +64,6 @@ func testHome(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(layer.Launch).To(BeTrue())
 		Expect(filepath.Join(layer.Path, "fixture-marker")).To(BeARegularFile())
-		Expect(layer.LaunchEnvironment["CATALINA_HOME.override"]).To(Equal(layer.Path))
+		Expect(layer.LaunchEnvironment["CATALINA_HOME.default"]).To(Equal(layer.Path))
 	})
 }
