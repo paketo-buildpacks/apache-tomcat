@@ -28,8 +28,7 @@ type AccessLoggingSupport struct {
 }
 
 func (a AccessLoggingSupport) Execute() (map[string]string, error) {
-	_, ok := os.LookupEnv("BPL_TOMCAT_ACCESS_LOGGING_ENABLED")
-	if !ok {
+	if _, ok := os.LookupEnv("BPL_TOMCAT_ACCESS_LOGGING_ENABLED"); !ok {
 		return nil, nil
 	}
 
