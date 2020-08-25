@@ -103,27 +103,10 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 		Expect(filepath.Join(layer.Path, "conf", "server.xml")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "conf", "web.xml")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-access-logging-support.jar")).To(BeARegularFile())
-		Expect(layer.Profile["access-logging-support.sh"]).To(Equal(`ENABLED=${BPL_TOMCAT_ACCESS_LOGGING:=n}
-
-[[ "${ENABLED}" = "n" ]] && return
-
-printf "Tomcat Access Logging enabled\n"
-
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Daccess.logging.enabled=true"
-`))
-		Expect(layer.Profile["classpath.sh"]).To(Equal(fmt.Sprintf(`[[ -z "${CLASSPATH}" ]] && return
-
-printf "Linking \${CLASSPATH} entries to %%s\n" "%[1]s"
-
-mkdir -p "%[1]s"
-IFS=':' read -ra PATHS <<< "${CLASSPATH}"
-ln -s "${PATHS[@]}" "%[1]s"
-`, filepath.Join(layer.Path, "lib"))))
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-lifecycle-support.jar")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")).To(BeARegularFile())
-		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal([]byte(fmt.Sprintf(`# shellcheck disable=SC2034
-CLASSPATH="%s"
-`, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")))))
+		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal(
+			[]byte(fmt.Sprintf(`CLASSPATH="%s"`, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")))))
 		Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
 		Expect(filepath.Join(layer.Path, "temp")).To(BeADirectory())
 

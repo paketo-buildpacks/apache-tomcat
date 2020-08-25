@@ -29,8 +29,6 @@ import (
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/paketo-buildpacks/libpak/sherpa"
-
-	_ "github.com/paketo-buildpacks/apache-tomcat/tomcat/statik"
 )
 
 type Base struct {
@@ -91,11 +89,8 @@ func NewBase(applicationPath string, buildpackPath string, configurationResolver
 		plan.Entries = append(plan.Entries, entry)
 	}
 
-
 	return b
 }
-
-//go:generate statik -src . -include *.sh
 
 func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	b.LayerContributor.Logger = b.Logger
@@ -115,10 +110,6 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 
 		if err := b.ContributeLogging(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute logging\n%w", err)
-		}
-
-		if err := b.ContributeClasspathEntries(layer); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to contribute classpath entries\n%w", err)
 		}
 
 		if b.ExternalConfigurationDependency != nil {
@@ -165,25 +156,6 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 	if err := sherpa.CopyFile(artifact, file); err != nil {
 		return fmt.Errorf("unable to copy %s to %s\n%w", artifact.Name(), file, err)
 	}
-
-	s, err := sherpa.StaticFile("/access-logging-support.sh")
-	if err != nil {
-		return fmt.Errorf("unable to load access-logging-support.sh\n%w", err)
-	}
-
-	layer.Profile.Add("access-logging-support.sh", s)
-
-	return nil
-}
-
-func (b Base) ContributeClasspathEntries(layer libcnb.Layer) error {
-	file := filepath.Join(layer.Path, "lib")
-	s, err := sherpa.TemplateFile("/classpath.sh", map[string]interface{}{"path": file})
-	if err != nil {
-		return fmt.Errorf("unable to load classpath.sh\n%w", err)
-	}
-
-	layer.Profile.Add("classpath.sh", s)
 
 	return nil
 }
@@ -311,10 +283,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 
 	b.Logger.Bodyf("Writing %s/bin/setenv.sh", layer.Path)
 
-	s, err := sherpa.TemplateFile("/setenv.sh", map[string]interface{}{"classpath": file})
-	if err != nil {
-		return fmt.Errorf("unable to load setenv.sh\n%w", err)
-	}
+	s := fmt.Sprintf(`CLASSPATH="%s"`, file)
 
 	file = filepath.Join(layer.Path, "bin", "setenv.sh")
 	if err = ioutil.WriteFile(file, []byte(s), 0755); err != nil {

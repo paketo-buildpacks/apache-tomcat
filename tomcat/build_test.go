@@ -86,9 +86,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			libcnb.Process{Type: "web", Command: "catalina.sh", Arguments: []string{"run"}},
 		))
 
-		Expect(result.Layers).To(HaveLen(2))
+		Expect(result.Layers).To(HaveLen(3))
 		Expect(result.Layers[0].Name()).To(Equal("tomcat"))
-		Expect(result.Layers[1].Name()).To(Equal("catalina-base"))
+		Expect(result.Layers[1].Name()).To(Equal("helper"))
+		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
+		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
 	})
 
 	context("$BP_TOMCAT_VERSION", func() {
@@ -186,7 +188,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			result, err := tomcat.Build{}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(result.Layers[1].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
+			Expect(result.Layers[2].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
 				ID:      "tomcat-external-configuration",
 				Name:    "Tomcat External Configuration",
 				Version: "test-version",
