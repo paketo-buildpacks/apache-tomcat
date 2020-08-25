@@ -27,9 +27,8 @@ id = "io.buildpacks.stacks.bionic"
 id = "org.cloudfoundry.stacks.cflinuxfs3"
 
 [[metadata.configurations]]
-name        = "BPL_TOMCAT_ACCESS_LOGGING"
+name        = "BPL_TOMCAT_ACCESS_LOGGING_ENABLED"
 description = "the Tomcat access logging state"
-default     = "disabled"
 launch      = true
 
 [[metadata.configurations]]
@@ -144,6 +143,7 @@ include-files = [
   "README.md",
   "bin/build",
   "bin/detect",
+  "bin/helper",
   "bin/main",
   "buildpack.toml",
   "resources/context.xml",

@@ -76,6 +76,10 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
 
+	h := libpak.NewHelperLayerContributor(context.Buildpack, result.Plan, "access-logging-support")
+	h.Logger = b.Logger
+	result.Layers = append(result.Layers, h)
+
 	accessLoggingDependency, err := dr.Resolve("tomcat-access-logging-support", "")
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
