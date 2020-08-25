@@ -136,9 +136,8 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
 
-		layer.Launch = true
 		return layer, nil
-	})
+	}, libpak.LaunchLayer)
 }
 
 func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
