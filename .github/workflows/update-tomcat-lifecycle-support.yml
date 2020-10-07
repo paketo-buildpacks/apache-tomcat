@@ -42,7 +42,7 @@ jobs:
             - id: dependency
               uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
               with:
-                artifact_id: tomcat-lifecycle-logging-support
+                artifact_id: tomcat-lifecycle-support
                 group_id: org.cloudfoundry
                 uri: https://repo.spring.io/release
             - id: buildpack

@@ -70,7 +70,7 @@ jobs:
                 echo "::set-output name=old-version::${OLD_VERSION}"
                 echo "::set-output name=new-version::${VERSION}"
               env:
-                ID: tomcat-7
+                ID: tomcat
                 SHA256: ${{ steps.dependency.outputs.sha256 }}
                 URI: ${{ steps.dependency.outputs.uri }}
                 VERSION: ${{ steps.dependency.outputs.version }}
