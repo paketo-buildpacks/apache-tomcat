@@ -5,6 +5,7 @@ The Paketo Apache Tomcat Buildpack is a Cloud Native Buildpack that contributes 
 This buildpack will participate all the following conditions are met
 
 * `<APPLICATION_ROOT>/WEB-INF` exists
+* `Main-Class` is NOT defined in the mainfest
 
 The buildpack will do the following:
 

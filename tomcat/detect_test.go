@@ -50,6 +50,13 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.RemoveAll(path)).To(Succeed())
 	})
 
+	it("fails with Main-Class", func() {
+		Expect(os.MkdirAll(filepath.Join(path, "META-INF"), 0755)).To(Succeed())
+		Expect(ioutil.WriteFile(filepath.Join(path, "META-INF", "MANIFEST.MF"), []byte(`Main-Class: test-main-class`), 0644)).To(Succeed())
+
+		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{Pass: false}))
+	})
+
 	it("passes without WEB-INF", func() {
 		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
 			Pass: true,
@@ -63,6 +70,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 			},
 		}))
 	})
+
 	it("passes with WEB-INF", func() {
 		Expect(os.MkdirAll(filepath.Join(path, "WEB-INF"), 0755)).To(Succeed())
 
