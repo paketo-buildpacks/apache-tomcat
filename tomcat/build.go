@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 )
@@ -32,6 +33,15 @@ type Build struct {
 }
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
+	m, err := libjvm.NewManifest(context.Application.Path)
+	if err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
+	}
+
+	if _, ok := m.Get("Main-Class"); ok {
+		return libcnb.BuildResult{}, nil
+	}
+
 	file := filepath.Join(context.Application.Path, "WEB-INF")
 	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)

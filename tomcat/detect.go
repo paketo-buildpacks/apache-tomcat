@@ -22,11 +22,21 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/libjvm"
 )
 
 type Detect struct{}
 
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
+	m, err := libjvm.NewManifest(context.Application.Path)
+	if err != nil {
+		return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
+	}
+
+	if _, ok := m.Get("Main-Class"); ok {
+		return libcnb.DetectResult{Pass: false}, nil
+	}
+
 	result := libcnb.DetectResult{
 		Pass: true,
 		Plans: []libcnb.BuildPlan{
@@ -42,9 +52,10 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 	file := filepath.Join(context.Application.Path, "WEB-INF")
 	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
 		return libcnb.DetectResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
-	} else if !os.IsNotExist(err) {
-		result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: "jvm-application"})
+	} else if os.IsNotExist(err) {
+		return result, nil
 	}
 
+	result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: "jvm-application"})
 	return result, nil
 }
