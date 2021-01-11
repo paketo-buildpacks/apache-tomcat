@@ -100,6 +100,18 @@ stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" 
   uri  = "https://www.apache.org/licenses/"
 
 [[metadata.dependencies]]
+id      = "tomcat"
+name    = "Apache Tomcat"
+version = "10.0.0"
+uri     = "placeholder"
+sha256  = "placeholder"
+stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
+
+  [[metadata.dependencies.licenses]]
+  type = "Apache-2.0"
+  uri  = "https://www.apache.org/licenses/"
+
+[[metadata.dependencies]]
 id      = "tomcat-access-logging-support"
 name    = "Apache Tomcat Access Logging Support"
 version = "3.3.0"
