@@ -33,24 +33,30 @@ type Build struct {
 }
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
+	result := libcnb.NewBuildResult()
 	m, err := libjvm.NewManifest(context.Application.Path)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
 	}
 
 	if _, ok := m.Get("Main-Class"); ok {
-		return libcnb.BuildResult{}, nil
+		for _, entry := range context.Plan.Entries {
+			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+		}
+		return result, nil
 	}
 
 	file := filepath.Join(context.Application.Path, "WEB-INF")
 	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
 	} else if os.IsNotExist(err) {
-		return libcnb.BuildResult{}, nil
+		for _, entry := range context.Plan.Entries {
+			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+		}
+		return result, nil
 	}
 
 	b.Logger.Title(context.Buildpack)
-	result := libcnb.NewBuildResult()
 
 	command := "catalina.sh"
 	arguments := []string{"run"}
@@ -82,13 +88,15 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 	}
 
-	home := NewHome(tomcatDep, dc, result.Plan)
+	home, be := NewHome(tomcatDep, dc)
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
+	result.BOM.Entries = append(result.BOM.Entries, be)
 
-	h := libpak.NewHelperLayerContributor(context.Buildpack, result.Plan, "access-logging-support")
+	h, be := libpak.NewHelperLayer(context.Buildpack, "access-logging-support")
 	h.Logger = b.Logger
 	result.Layers = append(result.Layers, h)
+	result.BOM.Entries = append(result.BOM.Entries, be)
 
 	accessLoggingDependency, err := dr.Resolve("tomcat-access-logging-support", "")
 	if err != nil {
@@ -120,11 +128,11 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		}
 	}
 
-	base := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency,
-		externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, result.Plan)
+	base, bomEntries := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency, externalConfigurationDependency, lifecycleDependency, loggingDependency, dc)
 
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)
+	result.BOM.Entries = append(result.BOM.Entries, bomEntries...)
 
 	return result, nil
 }

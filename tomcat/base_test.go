@@ -69,34 +69,48 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			To(Succeed())
 
 		accessLoggingDep := libpak.BuildpackDependency{
+			ID:     "tomcat-access-logging-support",
 			URI:    "https://localhost/stub-tomcat-access-logging-support.jar",
 			SHA256: "d723bfe2ba67dfa92b24e3b6c7b2d0e6a963de7313350e306d470e44e330a5d2",
 		}
 		lifecycleDep := libpak.BuildpackDependency{
+			ID:     "tomcat-lifecycle-support",
 			URI:    "https://localhost/stub-tomcat-lifecycle-support.jar",
 			SHA256: "723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534",
 		}
 		loggingDep := libpak.BuildpackDependency{
+			ID:     "tomcat-logging-support",
 			URI:    "https://localhost/stub-tomcat-logging-support.jar",
 			SHA256: "e0a7e163cc9f1ffd41c8de3942c7c6b505090b7484c2ba9be846334e31c44a2c",
 		}
 
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		plan := libcnb.BuildpackPlan{}
+		contributor, entries := tomcat.NewBase(
+			ctx.Application.Path,
+			ctx.Buildpack.Path,
+			libpak.ConfigurationResolver{},
+			"test-context-path",
+			accessLoggingDep,
+			nil,
+			lifecycleDep,
+			loggingDep,
+			dc,
+		)
+		Expect(entries).To(HaveLen(3))
+		Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(entries[0].Metadata["layer"]).To(Equal("catalina-base"))
+		Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(entries[1].Metadata["layer"]).To(Equal("catalina-base"))
+		Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+		Expect(entries[2].Metadata["layer"]).To(Equal("catalina-base"))
 
-		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
-			accessLoggingDep, nil, lifecycleDep, loggingDep, dc, &plan)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
-		layer, err = b.Contribute(layer)
+		layer, err = contributor.Contribute(layer)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(plan.Entries).To(HaveLen(3))
-		Expect(plan.Entries[0].Metadata["sha256"]).To(Equal("d723bfe2ba67dfa92b24e3b6c7b2d0e6a963de7313350e306d470e44e330a5d2"))
-		Expect(plan.Entries[1].Metadata["sha256"]).To(Equal("723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534"))
-		Expect(plan.Entries[2].Metadata["sha256"]).To(Equal("e0a7e163cc9f1ffd41c8de3942c7c6b505090b7484c2ba9be846334e31c44a2c"))
 		Expect(layer.Launch).To(BeTrue())
 		Expect(filepath.Join(layer.Path, "conf", "context.xml")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "conf", "logging.properties")).To(BeARegularFile())
@@ -131,36 +145,44 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			To(Succeed())
 
 		accessLoggingDep := libpak.BuildpackDependency{
+			ID:     "tomcat-access-logging-support",
 			URI:    "https://localhost/stub-tomcat-access-logging-support.jar",
 			SHA256: "d723bfe2ba67dfa92b24e3b6c7b2d0e6a963de7313350e306d470e44e330a5d2",
 		}
 		externalConfigurationDep := libpak.BuildpackDependency{
+			ID:     "tomcat-external-configuration",
 			URI:    "https://localhost/stub-external-configuration.tar.gz",
 			SHA256: "22e708cfd301430cbcf8d1c2289503d8288d50df519ff4db7cca0ff9fe83c324",
 		}
 		lifecycleDep := libpak.BuildpackDependency{
+			ID:     "tomcat-lifecycle-support",
 			URI:    "https://localhost/stub-tomcat-lifecycle-support.jar",
 			SHA256: "723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534",
 		}
 		loggingDep := libpak.BuildpackDependency{
+			ID:     "tomcat-logging-support",
 			URI:    "https://localhost/stub-tomcat-logging-support.jar",
 			SHA256: "e0a7e163cc9f1ffd41c8de3942c7c6b505090b7484c2ba9be846334e31c44a2c",
 		}
 
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		plan := libcnb.BuildpackPlan{}
-
-		b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
-			accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
+		contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
+		Expect(entries).To(HaveLen(4))
+		Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(entries[0].Metadata["layer"]).To(Equal("catalina-base"))
+		Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(entries[1].Metadata["layer"]).To(Equal("catalina-base"))
+		Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+		Expect(entries[2].Metadata["layer"]).To(Equal("catalina-base"))
+		Expect(entries[3].Name).To(Equal("tomcat-external-configuration"))
+		Expect(entries[3].Metadata["layer"]).To(Equal("catalina-base"))
 
-		layer, err = b.Contribute(layer)
+		layer, err = contrib.Contribute(layer)
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(plan.Entries).To(HaveLen(4))
-		Expect(plan.Entries[3].Metadata["sha256"]).To(Equal("22e708cfd301430cbcf8d1c2289503d8288d50df519ff4db7cca0ff9fe83c324"))
 		Expect(filepath.Join(layer.Path, "fixture-marker")).To(BeARegularFile())
 	})
 
@@ -185,36 +207,45 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 				To(Succeed())
 
 			accessLoggingDep := libpak.BuildpackDependency{
+				ID:     "tomcat-access-logging-support",
 				URI:    "https://localhost/stub-tomcat-access-logging-support.jar",
 				SHA256: "d723bfe2ba67dfa92b24e3b6c7b2d0e6a963de7313350e306d470e44e330a5d2",
 			}
 			externalConfigurationDep := libpak.BuildpackDependency{
+				ID:     "tomcat-external-configuration",
 				URI:    "https://localhost/stub-external-configuration-with-directory.tar.gz",
 				SHA256: "060818cbcdc2008563f0f9e2428ecf4a199a5821c5b8b1dcd11a67666c1e2cd6",
 			}
 			lifecycleDep := libpak.BuildpackDependency{
+				ID:     "tomcat-lifecycle-support",
 				URI:    "https://localhost/stub-tomcat-lifecycle-support.jar",
 				SHA256: "723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534",
 			}
 			loggingDep := libpak.BuildpackDependency{
+				ID:     "tomcat-logging-support",
 				URI:    "https://localhost/stub-tomcat-logging-support.jar",
 				SHA256: "e0a7e163cc9f1ffd41c8de3942c7c6b505090b7484c2ba9be846334e31c44a2c",
 			}
 
 			dc := libpak.DependencyCache{CachePath: "testdata"}
 
-			plan := libcnb.BuildpackPlan{}
+			contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
+			Expect(entries).To(HaveLen(4))
+			Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+			Expect(entries[0].Metadata["layer"]).To(Equal("catalina-base"))
+			Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+			Expect(entries[1].Metadata["layer"]).To(Equal("catalina-base"))
+			Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+			Expect(entries[2].Metadata["layer"]).To(Equal("catalina-base"))
+			Expect(entries[3].Name).To(Equal("tomcat-external-configuration"))
+			Expect(entries[3].Metadata["layer"]).To(Equal("catalina-base"))
 
-			b := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path",
-				accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc, &plan)
 			layer, err := ctx.Layers.Layer("test-layer")
 			Expect(err).NotTo(HaveOccurred())
 
-			layer, err = b.Contribute(layer)
+			layer, err = contrib.Contribute(layer)
 			Expect(err).NotTo(HaveOccurred())
 
-			Expect(plan.Entries).To(HaveLen(4))
-			Expect(plan.Entries[3].Metadata["sha256"]).To(Equal("060818cbcdc2008563f0f9e2428ecf4a199a5821c5b8b1dcd11a67666c1e2cd6"))
 			Expect(filepath.Join(layer.Path, "fixture-marker")).To(BeARegularFile())
 		})
 	})
