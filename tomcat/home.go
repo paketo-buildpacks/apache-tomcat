@@ -31,8 +31,11 @@ type Home struct {
 	Logger           bard.Logger
 }
 
-func NewHome(dependency libpak.BuildpackDependency, cache libpak.DependencyCache, plan *libcnb.BuildpackPlan) Home {
-	return Home{LayerContributor: libpak.NewDependencyLayerContributor(dependency, cache, plan)}
+func NewHome(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) (Home, libcnb.BOMEntry) {
+	contrib, entry := libpak.NewDependencyLayer(dependency, cache, libcnb.LayerTypes{
+		Launch: true,
+	})
+	return Home{LayerContributor: contrib}, entry
 }
 
 func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
@@ -47,7 +50,7 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		layer.LaunchEnvironment.Default("CATALINA_HOME", layer.Path)
 
 		return layer, nil
-	}, libpak.LaunchLayer)
+	})
 }
 
 func (h Home) Name() string {

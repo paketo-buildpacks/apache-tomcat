@@ -41,7 +41,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		var err error
 		ctx.Application.Path, err = ioutil.TempDir("", "tomcat-application")
 		Expect(err).NotTo(HaveOccurred())
-
+		ctx.Plan = libcnb.BuildpackPlan{Entries: []libcnb.BuildpackPlanEntry{
+			{Name: "jvm-application"},
+		}}
 	})
 
 	it.After(func() {
@@ -53,6 +55,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
+		Expect(result.Unmet).To(HaveLen(1))
+		Expect(result.Unmet[0].Name).To(Equal("jvm-application"))
 	})
 
 	it("does not contribute Tomcat if Main-Class", func() {
@@ -64,6 +68,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
+		Expect(result.Unmet).To(HaveLen(1))
+		Expect(result.Unmet[0].Name).To(Equal("jvm-application"))
 	})
 
 	it("contributes Tomcat", func() {
@@ -109,6 +115,13 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.Layers[1].Name()).To(Equal("helper"))
 		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
 		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
+
+		Expect(result.BOM.Entries).To(HaveLen(5))
+		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
+		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
+		Expect(result.BOM.Entries[2].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(result.BOM.Entries[3].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
 	})
 
 	context("$BP_TOMCAT_VERSION", func() {

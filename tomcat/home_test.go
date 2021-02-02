@@ -50,12 +50,16 @@ func testHome(t *testing.T, context spec.G, it spec.S) {
 
 	it("contributes catalina home", func() {
 		dep := libpak.BuildpackDependency{
+			ID:     "tomcat",
 			URI:    "https://localhost/stub-tomcat.tar.gz",
 			SHA256: "c31f9fd9b9458dd8dda54ce879dc7b08f8de0e638cb0936abcaa2316e7460c1e",
 		}
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		h := tomcat.NewHome(dep, dc, &libcnb.BuildpackPlan{})
+		h, be := tomcat.NewHome(dep, dc)
+		Expect(be.Name).To(Equal("tomcat"))
+		Expect(be.Launch).To(BeTrue())
+
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 

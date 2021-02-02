@@ -45,10 +45,17 @@ type Base struct {
 	Logger                          bard.Logger
 }
 
-func NewBase(applicationPath string, buildpackPath string, configurationResolver libpak.ConfigurationResolver,
-	contextPath string, accessLoggingDependency libpak.BuildpackDependency,
-	externalConfigurationDependency *libpak.BuildpackDependency, lifecycleDependency libpak.BuildpackDependency,
-	loggingDependency libpak.BuildpackDependency, cache libpak.DependencyCache, plan *libcnb.BuildpackPlan) Base {
+func NewBase(
+	applicationPath string,
+	buildpackPath string,
+	configurationResolver libpak.ConfigurationResolver,
+	contextPath string,
+	accessLoggingDependency libpak.BuildpackDependency,
+	externalConfigurationDependency *libpak.BuildpackDependency,
+	lifecycleDependency libpak.BuildpackDependency,
+	loggingDependency libpak.BuildpackDependency,
+	cache libpak.DependencyCache,
+) (Base, []libcnb.BOMEntry) {
 
 	dependencies := []libpak.BuildpackDependency{accessLoggingDependency, lifecycleDependency, loggingDependency}
 	if externalConfigurationDependency != nil {
@@ -66,30 +73,33 @@ func NewBase(applicationPath string, buildpackPath string, configurationResolver
 		LayerContributor: libpak.NewLayerContributor("Apache Tomcat Support", map[string]interface{}{
 			"context-path": contextPath,
 			"dependencies": dependencies,
+		}, libcnb.LayerTypes{
+			Launch: true,
 		}),
 		LifecycleDependency: lifecycleDependency,
 		LoggingDependency:   loggingDependency,
 	}
 
-	entry := accessLoggingDependency.AsBuildpackPlanEntry()
-	entry.Metadata["launch"] = b.Name()
-	plan.Entries = append(plan.Entries, entry)
+	var bomEntries []libcnb.BOMEntry
+	entry := accessLoggingDependency.AsBOMEntry()
+	entry.Metadata["layer"] = b.Name()
+	bomEntries = append(bomEntries, entry)
 
-	entry = lifecycleDependency.AsBuildpackPlanEntry()
-	entry.Metadata["launch"] = b.Name()
-	plan.Entries = append(plan.Entries, entry)
+	entry = lifecycleDependency.AsBOMEntry()
+	entry.Metadata["layer"] = b.Name()
+	bomEntries = append(bomEntries, entry)
 
-	entry = loggingDependency.AsBuildpackPlanEntry()
-	entry.Metadata["launch"] = b.Name()
-	plan.Entries = append(plan.Entries, entry)
+	entry = loggingDependency.AsBOMEntry()
+	entry.Metadata["layer"] = b.Name()
+	bomEntries = append(bomEntries, entry)
 
 	if externalConfigurationDependency != nil {
-		entry = externalConfigurationDependency.AsBuildpackPlanEntry()
-		entry.Metadata["launch"] = b.Name()
-		plan.Entries = append(plan.Entries, entry)
+		entry = externalConfigurationDependency.AsBOMEntry()
+		entry.Metadata["layer"] = b.Name()
+		bomEntries = append(bomEntries, entry)
 	}
 
-	return b
+	return b, bomEntries
 }
 
 func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
@@ -137,7 +147,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
 
 		return layer, nil
-	}, libpak.LaunchLayer)
+	})
 }
 
 func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
