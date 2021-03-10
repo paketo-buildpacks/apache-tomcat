@@ -57,36 +57,48 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{Pass: false}))
 	})
 
-	it("passes without WEB-INF", func() {
-		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
-			Pass: true,
-			Plans: []libcnb.BuildPlan{
-				{
-					Requires: []libcnb.BuildPlanRequire{
-						{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
-						{Name: "jvm-application"},
+	context("WEB-INF not found", func() {
+		it("requires jvm-application-artifact", func() {
+			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
+				Pass: true,
+				Plans: []libcnb.BuildPlan{
+					{
+						Provides: []libcnb.BuildPlanProvide{
+							{Name: "jvm-application"},
+						},
+						Requires: []libcnb.BuildPlanRequire{
+							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
+							{Name: "jvm-application-package"},
+							{Name: "jvm-application"},
+						},
 					},
 				},
-			},
-		}))
+			}))
+		})
 	})
 
-	it("passes with WEB-INF", func() {
-		Expect(os.MkdirAll(filepath.Join(path, "WEB-INF"), 0755)).To(Succeed())
+	context("WEB-INF found", func() {
+		it.Before(func() {
+			Expect(os.MkdirAll(filepath.Join(path, "WEB-INF"), 0755)).To(Succeed())
+		})
 
-		Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
-			Pass: true,
-			Plans: []libcnb.BuildPlan{
-				{
-					Provides: []libcnb.BuildPlanProvide{
-						{Name: "jvm-application"},
-					},
-					Requires: []libcnb.BuildPlanRequire{
-						{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
-						{Name: "jvm-application"},
+		it("requires and provides jvm-application-artifact", func() {
+			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
+				Pass: true,
+				Plans: []libcnb.BuildPlan{
+					{
+						Provides: []libcnb.BuildPlanProvide{
+							{Name: "jvm-application"},
+							{Name: "jvm-application-package"},
+						},
+						Requires: []libcnb.BuildPlanRequire{
+							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
+							{Name: "jvm-application-package"},
+							{Name: "jvm-application"},
+						},
 					},
 				},
-			},
-		}))
+			}))
+		})
 	})
 }
