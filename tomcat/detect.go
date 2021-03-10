@@ -25,6 +25,12 @@ import (
 	"github.com/paketo-buildpacks/libjvm"
 )
 
+const (
+	PlanEntryJVMApplication        = "jvm-application"
+	PlanEntryJVMApplicationPackage = "jvm-application-package"
+	PlanEntryJRE                   = "jre"
+)
+
 type Detect struct{}
 
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
@@ -41,9 +47,13 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		Pass: true,
 		Plans: []libcnb.BuildPlan{
 			{
+				Provides: []libcnb.BuildPlanProvide{
+					{Name: PlanEntryJVMApplication},
+				},
 				Requires: []libcnb.BuildPlanRequire{
-					{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
-					{Name: "jvm-application"},
+					{Name: PlanEntryJRE, Metadata: map[string]interface{}{"launch": true}},
+					{Name: PlanEntryJVMApplicationPackage},
+					{Name: PlanEntryJVMApplication},
 				},
 			},
 		},
@@ -56,6 +66,6 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		return result, nil
 	}
 
-	result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: "jvm-application"})
+	result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: PlanEntryJVMApplicationPackage})
 	return result, nil
 }
