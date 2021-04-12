@@ -90,9 +90,9 @@ stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" 
 [[metadata.dependencies]]
 id      = "tomcat"
 name    = "Apache Tomcat"
-version = "9.0.44"
-uri     = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.44/bin/apache-tomcat-9.0.44.tar.gz"
-sha256  = "ea1a9bb5ead4452f926dc07b7b453975cee5ea8c4aad670157d042efc5748352"
+version = "9.0.45"
+uri     = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.45/bin/apache-tomcat-9.0.45.tar.gz"
+sha256  = "bb1ea3d0f25efa60cde210e0cf85da5daed349529b733b95a85477c4f141ee2c"
 stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
 
   [[metadata.dependencies.licenses]]
