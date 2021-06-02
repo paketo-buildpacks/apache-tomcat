@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-api = "0.5"
+api = "0.6"
 
 [buildpack]
 id       = "paketo-buildpacks/apache-tomcat"
 name     = "Paketo Apache Tomcat Buildpack"
 version  = "{{.version}}"
 homepage = "https://github.com/paketo-buildpacks/apache-tomcat"
+description = "A Cloud Native Buildpack that contributes Apache Tomcat and Process Types for WARs"
+keywords    = ["java", "tomcat", "war"]
+
+[[buildpack.licenses]]
+type = "Apache-2.0"
+uri  = "https://github.com/paketo-buildpacks/apache-tomcat/blob/main/LICENSE"
 
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"

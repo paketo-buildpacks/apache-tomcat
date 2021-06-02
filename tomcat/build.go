@@ -63,7 +63,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	result.Processes = append(result.Processes,
 		libcnb.Process{Type: "task", Command: command, Arguments: arguments},
 		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments},
-		libcnb.Process{Type: "web", Command: command, Arguments: arguments},
+		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Default: true},
 	)
 
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
