@@ -30,7 +30,7 @@ The buildpack will do the following:
 | `$BP_TOMCAT_EXT_CONF_URI` | The download URI of the external configuration package
 | `$BP_TOMCAT_EXT_CONF_VERSION` | The version of the external configuration package
 | `$BP_TOMCAT_VERSION` |  Configure a specific Tomcat version.  This value must _exactly_ match a version available in the buildpack so typically it would configured to a wildcard such as `9.*`.
-| `BPL_TOMCAT_ACCESS_LOGGING` | Whether access logging should be activated.  Defaults to inactive.
+| `BPL_TOMCAT_ACCESS_LOGGING_ENABLED` | Whether access logging should be activated.  Defaults to inactive.
 
 ### External Configuration Package
 The artifacts that the repository provides must be in TAR format and must follow the Tomcat archive structure:
