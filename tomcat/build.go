@@ -22,6 +22,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/heroku/color"
+
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
@@ -86,6 +88,10 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	tomcatDep, err := dr.Resolve("tomcat", v)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
+	}
+
+	if strings.HasPrefix(tomcatDep.Version, "7") {
+		dc.Logger.Headerf("%s Apache Tomcat version 7 is End-of-Life, this is the last release that will contain version 7", color.YellowString("WARNING: "))
 	}
 
 	home, be := NewHome(tomcatDep, dc)
