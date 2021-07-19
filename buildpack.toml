@@ -72,18 +72,6 @@ build       = true
 [[metadata.dependencies]]
 id      = "tomcat"
 name    = "Apache Tomcat"
-version = "7.0.109"
-uri     = "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.109/bin/apache-tomcat-7.0.109.tar.gz"
-sha256  = "ebfeb051e6da24bce583a4105439bfdafefdc7c5bdd642db2ab07e056211cb31"
-stacks  = [ "io.buildpacks.stacks.bionic", "org.cloudfoundry.stacks.cflinuxfs3" ]
-
-  [[metadata.dependencies.licenses]]
-  type = "Apache-2.0"
-  uri  = "https://www.apache.org/licenses/"
-
-[[metadata.dependencies]]
-id      = "tomcat"
-name    = "Apache Tomcat"
 version = "8.5.69"
 uri     = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz"
 sha256  = "cc9616eb29bf491839ce5c8a1c3e37cb710f6ec99aad5aefb7944b5184b13398"
