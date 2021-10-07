@@ -47,8 +47,8 @@ jobs:
                 artifact_id: tomcat-access-logging-support
                 group_id: org.cloudfoundry
                 uri: https://repo.spring.io/release
-            - id: buildpack
-              name: Update Buildpack Dependency
+            - name: Update Buildpack Dependency
+              id: buildpack
               run: |
                 #!/usr/bin/env bash
 
