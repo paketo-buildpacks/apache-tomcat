@@ -124,6 +124,64 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
 	})
 
+	it("contributes Tomcat on Tiny stack", func() {
+		Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "WEB-INF"), 0755)).To(Succeed())
+
+		ctx.Buildpack.Metadata = map[string]interface{}{
+			"dependencies": []map[string]interface{}{
+				{
+					"id":      "tomcat",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+				},
+				{
+					"id":      "tomcat-access-logging-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+				},
+				{
+					"id":      "tomcat-lifecycle-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+				},
+				{
+					"id":      "tomcat-logging-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+				},
+			},
+		}
+		ctx.StackID = "io.paketo.stacks.tiny"
+
+		result, err := tomcat.Build{}.Build(ctx)
+		Expect(err).NotTo(HaveOccurred())
+		tinyArgs := []string{"-classpath",
+			"/layers/paketo-buildpacks_apache-tomcat/tomcat/bin/bootstrap.jar:/layers/paketo-buildpacks_apache-tomcat/tomcat/bin/tomcat-juli.jar",
+			"-Dcatalina.home=/layers/paketo-buildpacks_apache-tomcat/tomcat",
+			"-Dcatalina.base=/layers/paketo-buildpacks_apache-tomcat/catalina-base",
+			"-Djava.io.tmpdir=/layers/paketo-buildpacks_apache-tomcat/catalina-base/temp",
+			"org.apache.catalina.startup.Bootstrap", "start"}
+
+		Expect(result.Processes).To(ContainElements(
+			libcnb.Process{Type: "task", Command: "java", Arguments: tinyArgs},
+			libcnb.Process{Type: "tomcat", Command: "java", Arguments: tinyArgs},
+			libcnb.Process{Type: "web", Command: "java", Arguments: tinyArgs, Default: true},
+		))
+
+		Expect(result.Layers).To(HaveLen(3))
+		Expect(result.Layers[0].Name()).To(Equal("tomcat"))
+		Expect(result.Layers[1].Name()).To(Equal("helper"))
+		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
+		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
+
+		Expect(result.BOM.Entries).To(HaveLen(5))
+		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
+		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
+		Expect(result.BOM.Entries[2].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(result.BOM.Entries[3].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
+	})
+
 	context("$BP_TOMCAT_VERSION", func() {
 		it.Before(func() {
 			Expect(os.Setenv("BP_TOMCAT_VERSION", "1.1.1")).To(Succeed())
