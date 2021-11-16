@@ -60,13 +60,34 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 	b.Logger.Title(context.Buildpack)
 
-	command := "catalina.sh"
-	arguments := []string{"run"}
-	result.Processes = append(result.Processes,
-		libcnb.Process{Type: "task", Command: command, Arguments: arguments},
-		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments},
-		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Default: true},
-	)
+	if context.StackID == libpak.TinyStackID {
+
+		homePath := filepath.Join(context.Layers.Path, "tomcat")
+		basePath := filepath.Join(context.Layers.Path, "catalina-base")
+		command := "java"
+
+		arguments := []string{
+			"-classpath",
+			fmt.Sprintf("%[1]s/bin/bootstrap.jar:%[1]s/bin/tomcat-juli.jar", homePath, homePath),
+			fmt.Sprintf("-Dcatalina.home=%s", homePath),
+			fmt.Sprintf("-Dcatalina.base=%s", basePath),
+			fmt.Sprintf("-Djava.io.tmpdir=%s", filepath.Join(basePath, "/temp")),
+			"org.apache.catalina.startup.Bootstrap", "start"}
+		result.Processes = append(result.Processes,
+			libcnb.Process{Type: "task", Command: command, Arguments: arguments, Direct: true},
+			libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments, Direct: true},
+			libcnb.Process{Type: "web", Command: command, Arguments: arguments, Default: true, Direct: true},
+		)
+		b.Logger.Header(color.YellowString("WARNING: Tomcat will run on the Tiny stack which has no shell, some configuration options, such as setting CATALINA_OPTS, will not be available"))
+	} else {
+		command := "catalina.sh"
+		arguments := []string{"run"}
+		result.Processes = append(result.Processes,
+			libcnb.Process{Type: "task", Command: command, Arguments: arguments},
+			libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments},
+			libcnb.Process{Type: "web", Command: command, Arguments: arguments, Default: true},
+		)
+	}
 
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
 	if err != nil {
