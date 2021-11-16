@@ -82,10 +82,10 @@ api = "0.6"
   [[metadata.dependencies]]
     id = "tomcat"
     name = "Apache Tomcat"
-    sha256 = "24707ee0e5455de2abf19eb2f7d6bcff6a6d26448acc0693399872d50b40733f"
+    sha256 = "63e37ced106daf9b7d1516d1d4e230593c7ff2e1021effe91bc552a751469181"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz"
-    version = "9.0.54"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.55/bin/apache-tomcat-9.0.55.tar.gz"
+    version = "9.0.55"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
