@@ -82,10 +82,10 @@ api = "0.6"
   [[metadata.dependencies]]
     id = "tomcat"
     name = "Apache Tomcat"
-    sha256 = "24707ee0e5455de2abf19eb2f7d6bcff6a6d26448acc0693399872d50b40733f"
+    sha256 = "63e37ced106daf9b7d1516d1d4e230593c7ff2e1021effe91bc552a751469181"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz"
-    version = "9.0.54"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.55/bin/apache-tomcat-9.0.55.tar.gz"
+    version = "9.0.55"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
@@ -94,10 +94,10 @@ api = "0.6"
   [[metadata.dependencies]]
     id = "tomcat"
     name = "Apache Tomcat"
-    sha256 = "d346b1bf76495b794438c28178d90d4d3c6830c43a22fa836de49db6a2997c06"
+    sha256 = "4912991edae7030d057486431faa11e89914edbf6d47ce41f72cd5e9b8d66847"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.12/bin/apache-tomcat-10.0.12.tar.gz"
-    version = "10.0.12"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.13/bin/apache-tomcat-10.0.13.tar.gz"
+    version = "10.0.13"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
