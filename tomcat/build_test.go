@@ -105,9 +105,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Processes).To(ContainElements(
-			libcnb.Process{Type: "task", Command: "catalina.sh", Arguments: []string{"run"}},
-			libcnb.Process{Type: "tomcat", Command: "catalina.sh", Arguments: []string{"run"}},
-			libcnb.Process{Type: "web", Command: "catalina.sh", Arguments: []string{"run"}, Default: true},
+			libcnb.Process{Type: "task", Command: "bash", Arguments: []string{"catalina.sh", "run"}, Direct: true},
+			libcnb.Process{Type: "tomcat", Command: "bash", Arguments: []string{"catalina.sh", "run"}, Direct: true},
+			libcnb.Process{Type: "web", Command: "bash", Arguments: []string{"catalina.sh", "run"}, Direct: true, Default: true},
 		))
 
 		Expect(result.Layers).To(HaveLen(3))
@@ -124,7 +124,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
 	})
 
-	it("contributes Tomcat on Tiny stack", func() {
+	it("contributes Tomcat on Tiny", func() {
+		ctx.StackID = libpak.TinyStackID
+
 		Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "WEB-INF"), 0755)).To(Succeed())
 
 		ctx.Buildpack.Metadata = map[string]interface{}{
@@ -132,41 +134,53 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				{
 					"id":      "tomcat",
 					"version": "1.1.1",
-					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+					"stacks":  []interface{}{libpak.TinyStackID},
 				},
 				{
 					"id":      "tomcat-access-logging-support",
 					"version": "1.1.1",
-					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+					"stacks":  []interface{}{libpak.TinyStackID},
 				},
 				{
 					"id":      "tomcat-lifecycle-support",
 					"version": "1.1.1",
-					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+					"stacks":  []interface{}{libpak.TinyStackID},
 				},
 				{
 					"id":      "tomcat-logging-support",
 					"version": "1.1.1",
-					"stacks":  []interface{}{"io.paketo.stacks.tiny"},
+					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
+					"stacks":  []interface{}{libpak.TinyStackID},
 				},
 			},
 		}
-		ctx.StackID = "io.paketo.stacks.tiny"
 
 		result, err := tomcat.Build{}.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())
-		tinyArgs := []string{"-classpath",
-			"/layers/paketo-buildpacks_apache-tomcat/tomcat/bin/bootstrap.jar:/layers/paketo-buildpacks_apache-tomcat/tomcat/bin/tomcat-juli.jar",
-			"-Dcatalina.home=/layers/paketo-buildpacks_apache-tomcat/tomcat",
-			"-Dcatalina.base=/layers/paketo-buildpacks_apache-tomcat/catalina-base",
-			"-Djava.io.tmpdir=/layers/paketo-buildpacks_apache-tomcat/catalina-base/temp",
-			"org.apache.catalina.startup.Bootstrap", "start"}
 
-		Expect(result.Processes).To(ContainElements(
-			libcnb.Process{Type: "task", Command: "java", Arguments: tinyArgs},
-			libcnb.Process{Type: "tomcat", Command: "java", Arguments: tinyArgs},
-			libcnb.Process{Type: "web", Command: "java", Arguments: tinyArgs, Default: true},
-		))
+		for _, procType := range []string{"task", "tomcat", "web"} {
+			expectedProcess := libcnb.Process{
+				Type:    procType,
+				Command: "java",
+				Arguments: []string{
+					"-Djava.util.logging.config.file=catalina-base/conf/logging.properties",
+					"-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
+					"-Djdk.tls.ephemeralDHKeySize=2048",
+					"-classpath",
+					"catalina-base/bin/tomcat-logging-support-1.1.1.RELEASE.jar:tomcat/bin/bootstrap.jar:tomcat/bin/tomcat-juli.jar",
+					"-Dcatalina.home=tomcat",
+					"-Dcatalina.base=catalina-base",
+					"-Djava.io.tmpdir=catalina-base/temp",
+					"org.apache.catalina.startup.Bootstrap",
+					"start",
+				},
+				Direct: true,
+			}
+			if procType == "web" {
+				expectedProcess.Default = true
+			}
+			Expect(result.Processes).To(ContainElement(expectedProcess))
+		}
 
 		Expect(result.Layers).To(HaveLen(3))
 		Expect(result.Layers[0].Name()).To(Equal("tomcat"))
