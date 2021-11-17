@@ -19,8 +19,11 @@ package tomcat
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/paketo-buildpacks/libpak/sherpa"
 
 	"github.com/heroku/color"
 
@@ -59,14 +62,6 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	}
 
 	b.Logger.Title(context.Buildpack)
-
-	command := "catalina.sh"
-	arguments := []string{"run"}
-	result.Processes = append(result.Processes,
-		libcnb.Process{Type: "task", Command: command, Arguments: arguments},
-		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments},
-		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Default: true},
-	)
 
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
 	if err != nil {
@@ -140,10 +135,26 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	result.Layers = append(result.Layers, base)
 	result.BOM.Entries = append(result.BOM.Entries, bomEntries...)
 
+	command := "bash"
+	arguments := []string{"catalina.sh", "run"}
+
+	if context.StackID == libpak.TinyStackID {
+		command, arguments = b.tinyStartCommand(
+			filepath.Join(context.Layers.Path, "tomcat"),
+			filepath.Join(context.Layers.Path, "catalina-base"),
+			loggingDependency)
+	}
+
+	result.Processes = append(result.Processes,
+		libcnb.Process{Type: "task", Command: command, Arguments: arguments, Direct: true},
+		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments, Direct: true},
+		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Direct: true, Default: true},
+	)
+
 	return result, nil
 }
 
-func (Build) ContextPath(configurationResolver libpak.ConfigurationResolver) string {
+func (b Build) ContextPath(configurationResolver libpak.ConfigurationResolver) string {
 	cp := "ROOT"
 	if s, ok := configurationResolver.Resolve("BP_TOMCAT_CONTEXT_PATH"); ok {
 		cp = s
@@ -153,4 +164,33 @@ func (Build) ContextPath(configurationResolver libpak.ConfigurationResolver) str
 	cp = strings.ReplaceAll(cp, "/", "#")
 
 	return cp
+}
+
+func (b Build) tinyStartCommand(homePath, basePath string, loggingDep libpak.BuildpackDependency) (string, []string) {
+	command := "java"
+
+	arguments := []string{
+		fmt.Sprintf("-Djava.util.logging.config.file=%s/conf/logging.properties", basePath),
+		"-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
+	}
+
+	arguments = append(arguments, sherpa.GetEnvWithDefault("JSSE_OPTS", "-Djdk.tls.ephemeralDHKeySize=2048"))
+
+	classpath := []string{
+		fmt.Sprintf("%s/bin/%s", basePath, path.Base(loggingDep.URI)),
+		fmt.Sprintf("%s/bin/bootstrap.jar", homePath),
+		fmt.Sprintf("%s/bin/tomcat-juli.jar", homePath),
+	}
+	arguments = append(arguments, "-classpath", strings.Join(classpath, ":"))
+
+	arguments = append(arguments,
+		fmt.Sprintf("-Dcatalina.home=%s", homePath),
+		fmt.Sprintf("-Dcatalina.base=%s", basePath),
+		fmt.Sprintf("-Djava.io.tmpdir=%s", filepath.Join(basePath, "/temp")),
+		"org.apache.catalina.startup.Bootstrap", "start",
+	)
+
+	b.Logger.Header(color.YellowString("WARNING: Tomcat will run on the Tiny stack which has no shell. Due to this, some configuration options such as `bin/setenv.sh` and setting `CATALINA_*` environment variables, will not be available"))
+
+	return command, arguments
 }

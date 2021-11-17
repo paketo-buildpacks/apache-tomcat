@@ -17,6 +17,14 @@ The buildpack will do the following:
   * Contribute external configuration if available
 * Contributes `tomcat`, `task`, and `web` process types
 
+### Tiny Stack
+
+When this buildpack runs on the [Tiny stack](https://paketo.io/docs/concepts/stacks/#tiny), which has no shell, the following notes apply:
+* As there is no shell, the `catalina.sh` script cannot be used to start Tomcat
+* The Tomcat Buildpack will generate a start command directly. It does not support all the functionality in `catalina.sh`.
+* Some configuration options such as `bin/setenv.sh` and setting `CATALINA_*` environment variables, will not be available.
+* Tomcat will be run with `umask` set to `0022` instead of the `catalina.sh`provided default of `0027`
+
 [als]: https://github.com/cloudfoundry/java-buildpack-support/tree/master/tomcat-access-logging-support
 [lcs]: https://github.com/cloudfoundry/java-buildpack-support/tree/master/tomcat-lifecycle-support
 [lgs]: https://github.com/cloudfoundry/java-buildpack-support/tree/master/tomcat-logging-support
