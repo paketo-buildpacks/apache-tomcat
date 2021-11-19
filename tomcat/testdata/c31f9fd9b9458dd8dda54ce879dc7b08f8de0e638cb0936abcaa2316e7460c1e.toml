@@ -1,3 +1,7 @@
 id = "tomcat"
 uri = "https://localhost/stub-tomcat.tar.gz"
 sha256 = "c31f9fd9b9458dd8dda54ce879dc7b08f8de0e638cb0936abcaa2316e7460c1e"
+purl = "pkg:generic/tomcat@1.1.1"
+cpes = [
+    "cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*"
+]

@@ -23,6 +23,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/paketo-buildpacks/libpak/effect"
+	"github.com/paketo-buildpacks/libpak/sbom"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 
 	"github.com/heroku/color"
@@ -34,7 +36,8 @@ import (
 )
 
 type Build struct {
-	Logger bard.Logger
+	Logger      bard.Logger
+	SBOMScanner sbom.SBOMScanner
 }
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
@@ -92,12 +95,16 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	home, be := NewHome(tomcatDep, dc)
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
-	result.BOM.Entries = append(result.BOM.Entries, be)
+	if be.Name != "" {
+		result.BOM.Entries = append(result.BOM.Entries, be)
+	}
 
 	h, be := libpak.NewHelperLayer(context.Buildpack, "access-logging-support")
 	h.Logger = b.Logger
 	result.Layers = append(result.Layers, h)
-	result.BOM.Entries = append(result.BOM.Entries, be)
+	if be.Name != "" {
+		result.BOM.Entries = append(result.BOM.Entries, be)
+	}
 
 	accessLoggingDependency, err := dr.Resolve("tomcat-access-logging-support", "")
 	if err != nil {
@@ -126,6 +133,8 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 			URI:     uri,
 			SHA256:  s,
 			Stacks:  []string{context.StackID},
+			CPEs:    nil,
+			PURL:    "",
 		}
 	}
 
@@ -133,7 +142,9 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)
-	result.BOM.Entries = append(result.BOM.Entries, bomEntries...)
+	if bomEntries != nil {
+		result.BOM.Entries = append(result.BOM.Entries, bomEntries...)
+	}
 
 	command := "bash"
 	arguments := []string{"catalina.sh", "run"}
@@ -150,6 +161,13 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		libcnb.Process{Type: "tomcat", Command: command, Arguments: arguments, Direct: true},
 		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Direct: true, Default: true},
 	)
+
+	if b.SBOMScanner == nil {
+		b.SBOMScanner = sbom.NewSyftCLISBOMScanner(context.Layers, effect.NewExecutor(), b.Logger)
+	}
+	if err := b.SBOMScanner.ScanLaunch(context.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON); err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create Build SBoM \n%w", err)
+	}
 
 	return result, nil
 }

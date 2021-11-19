@@ -1,3 +1,7 @@
 id = "tomcat-external-configuration"
 uri = "https://localhost/stub-external-configuration-with-directory.tar.gz"
 sha256 = "060818cbcdc2008563f0f9e2428ecf4a199a5821c5b8b1dcd11a67666c1e2cd6"
+purl = "pkg:generic/tomcat@1.1.1"
+cpes = [
+    "cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*"
+]
