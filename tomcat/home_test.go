@@ -53,12 +53,12 @@ func testHome(t *testing.T, context spec.G, it spec.S) {
 			ID:     "tomcat",
 			URI:    "https://localhost/stub-tomcat.tar.gz",
 			SHA256: "c31f9fd9b9458dd8dda54ce879dc7b08f8de0e638cb0936abcaa2316e7460c1e",
+			PURL:   "pkg:generic/tomcat@1.1.1",
+			CPEs:   []string{"cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*"},
 		}
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		h, be := tomcat.NewHome(dep, dc)
-		Expect(be.Name).To(Equal("tomcat"))
-		Expect(be.Launch).To(BeTrue())
+		h, _ := tomcat.NewHome(dep, dc)
 
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())

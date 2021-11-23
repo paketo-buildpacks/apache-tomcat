@@ -22,6 +22,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/paketo-buildpacks/libpak/sbom/mocks"
+
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
 	"github.com/paketo-buildpacks/libpak"
@@ -32,9 +34,9 @@ import (
 
 func testBuild(t *testing.T, context spec.G, it spec.S) {
 	var (
-		Expect = NewWithT(t).Expect
-
-		ctx libcnb.BuildContext
+		Expect      = NewWithT(t).Expect
+		sbomScanner mocks.SBOMScanner
+		ctx         libcnb.BuildContext
 	)
 
 	it.Before(func() {
@@ -44,6 +46,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		ctx.Plan = libcnb.BuildpackPlan{Entries: []libcnb.BuildpackPlanEntry{
 			{Name: "jvm-application"},
 		}}
+		sbomScanner = mocks.SBOMScanner{}
+		sbomScanner.On("ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON).Return(nil)
+
 	})
 
 	it.After(func() {
@@ -51,7 +56,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("does not contribute Tomcat if no WEB-INF", func() {
-		result, err := tomcat.Build{}.Build(ctx)
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
@@ -64,7 +69,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "META-INF"), 0755)).To(Succeed())
 		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "META-INF", "MANIFEST.MF"), []byte(`Main-Class: test-main-class`), 0644)).To(Succeed())
 
-		result, err := tomcat.Build{}.Build(ctx)
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
@@ -81,27 +86,36 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					"id":      "tomcat",
 					"version": "1.1.1",
 					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat@1.1.1",
+					"cpes":    "cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*",
 				},
 				{
 					"id":      "tomcat-access-logging-support",
 					"version": "1.1.1",
 					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-access-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:1.1.1:*:*:*:*:*:*:*",
 				},
 				{
 					"id":      "tomcat-lifecycle-support",
 					"version": "1.1.1",
 					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-lifecycle-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-lifecycle-logging-support:1.1.1:*:*:*:*:*:*:*",
 				},
 				{
 					"id":      "tomcat-logging-support",
 					"version": "1.1.1",
+					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
 					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-logging-support:1.1.1:*:*:*:*:*:*:*",
 				},
 			},
 		}
 		ctx.StackID = "test-stack-id"
 
-		result, err := tomcat.Build{}.Build(ctx)
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Processes).To(ContainElements(
@@ -116,12 +130,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
 		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
 
-		Expect(result.BOM.Entries).To(HaveLen(5))
-		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
-		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
-		Expect(result.BOM.Entries[2].Name).To(Equal("tomcat-access-logging-support"))
-		Expect(result.BOM.Entries[3].Name).To(Equal("tomcat-lifecycle-support"))
-		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
+		Expect(result.BOM.Entries).To(HaveLen(0))
+
+		sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
 	})
 
 	it("contributes Tomcat on Tiny", func() {
@@ -133,29 +144,37 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			"dependencies": []map[string]interface{}{
 				{
 					"id":      "tomcat",
-					"version": "1.1.1",
+					"version": "1.1.2",
 					"stacks":  []interface{}{libpak.TinyStackID},
+					"purl":    "pkg:generic/tomcat@1.1.1",
+					"cpes":    []interface{}{"cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*"},
 				},
 				{
 					"id":      "tomcat-access-logging-support",
 					"version": "1.1.1",
 					"stacks":  []interface{}{libpak.TinyStackID},
+					"purl":    "pkg:generic/tomcat-access-logging-support@3.3.0",
+					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.3.0:*:*:*:*:*:*:*"},
 				},
 				{
 					"id":      "tomcat-lifecycle-support",
 					"version": "1.1.1",
 					"stacks":  []interface{}{libpak.TinyStackID},
+					"purl":    "pkg:generic/tomcat-lifecycle-logging-support@1.1.1",
+					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-lifecycle-logging-support:1.1.1:*:*:*:*:*:*:*"},
 				},
 				{
 					"id":      "tomcat-logging-support",
 					"version": "1.1.1",
 					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
 					"stacks":  []interface{}{libpak.TinyStackID},
+					"purl":    "pkg:generic/tomcat-logging-support@1.1.1",
+					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-logging-support:1.1.1:*:*:*:*:*:*:*"},
 				},
 			},
 		}
 
-		result, err := tomcat.Build{}.Build(ctx)
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())
 
 		for _, procType := range []string{"task", "tomcat", "web"} {
@@ -188,12 +207,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
 		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
 
-		Expect(result.BOM.Entries).To(HaveLen(5))
-		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
-		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
-		Expect(result.BOM.Entries[2].Name).To(Equal("tomcat-access-logging-support"))
-		Expect(result.BOM.Entries[3].Name).To(Equal("tomcat-lifecycle-support"))
-		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
+		Expect(result.BOM.Entries).To(HaveLen(0))
+		sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
 	})
 
 	context("$BP_TOMCAT_VERSION", func() {
@@ -239,10 +254,11 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}
 			ctx.StackID = "test-stack-id"
 
-			result, err := tomcat.Build{}.Build(ctx)
+			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(result.Layers[0].(tomcat.Home).LayerContributor.Dependency.Version).To(Equal("1.1.1"))
+			sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
 		})
 	})
 
@@ -288,7 +304,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}
 			ctx.StackID = "test-stack-id"
 
-			result, err := tomcat.Build{}.Build(ctx)
+			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(result.Layers[2].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
@@ -299,11 +315,12 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				SHA256:  "test-sha256",
 				Stacks:  []string{ctx.StackID},
 			}))
+			sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
 		})
 	})
 
 	it("returns default context path", func() {
-		Expect(tomcat.Build{}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("ROOT"))
+		Expect(tomcat.Build{SBOMScanner: &sbomScanner}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("ROOT"))
 	})
 
 	context("$BP_TOMCAT_CONTEXT_PATH", func() {
@@ -316,7 +333,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("returns transformed context path", func() {
-			Expect(tomcat.Build{}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("alpha#bravo"))
+			Expect(tomcat.Build{SBOMScanner: &sbomScanner}.ContextPath(libpak.ConfigurationResolver{})).To(Equal("alpha#bravo"))
 		})
 	})
+
 }

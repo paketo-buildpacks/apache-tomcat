@@ -1,3 +1,7 @@
 id = "tomcat-lifecycle-support"
 uri = "https://localhost/stub-tomcat-lifecycle-support.jar"
 sha256 = "723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534"
+purl = "pkg:generic/tomcat-lifecycle-support@3.3.0"
+cpes = [
+    "cpe:2.3:a:cloudfoundry:tomcat-lifecycle-support:3.3.0:*:*:*:*:*:*:*"
+]

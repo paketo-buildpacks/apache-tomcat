@@ -81,22 +81,28 @@ func NewBase(
 	}
 
 	var bomEntries []libcnb.BOMEntry
-	entry := accessLoggingDependency.AsBOMEntry()
-	entry.Metadata["layer"] = b.Name()
-	bomEntries = append(bomEntries, entry)
-
-	entry = lifecycleDependency.AsBOMEntry()
-	entry.Metadata["layer"] = b.Name()
-	bomEntries = append(bomEntries, entry)
-
-	entry = loggingDependency.AsBOMEntry()
-	entry.Metadata["layer"] = b.Name()
-	bomEntries = append(bomEntries, entry)
-
-	if externalConfigurationDependency != nil {
-		entry = externalConfigurationDependency.AsBOMEntry()
+	var entry libcnb.BOMEntry
+	if accessLoggingDependency.PURL == "" && len(accessLoggingDependency.CPEs) == 0 {
+		entry = accessLoggingDependency.AsBOMEntry()
 		entry.Metadata["layer"] = b.Name()
 		bomEntries = append(bomEntries, entry)
+	}
+	if lifecycleDependency.PURL == "" && len(lifecycleDependency.CPEs) == 0 {
+		entry = lifecycleDependency.AsBOMEntry()
+		entry.Metadata["layer"] = b.Name()
+		bomEntries = append(bomEntries, entry)
+	}
+	if loggingDependency.PURL == "" && len(loggingDependency.CPEs) == 0 {
+		entry = loggingDependency.AsBOMEntry()
+		entry.Metadata["layer"] = b.Name()
+		bomEntries = append(bomEntries, entry)
+	}
+	if externalConfigurationDependency != nil {
+		if externalConfigurationDependency.PURL == "" && len(externalConfigurationDependency.CPEs) == 0 {
+			entry = externalConfigurationDependency.AsBOMEntry()
+			entry.Metadata["layer"] = b.Name()
+			bomEntries = append(bomEntries, entry)
+		}
 	}
 
 	return b, bomEntries
