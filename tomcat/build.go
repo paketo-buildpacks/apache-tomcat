@@ -66,6 +66,10 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 	b.Logger.Title(context.Buildpack)
 
+	if b.SBOMScanner == nil {
+		b.SBOMScanner = sbom.NewSyftCLISBOMScanner(context.Layers, effect.NewExecutor(), b.Logger)
+	}
+
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &b.Logger)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
@@ -162,11 +166,8 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		libcnb.Process{Type: "web", Command: command, Arguments: arguments, Direct: true, Default: true},
 	)
 
-	if b.SBOMScanner == nil {
-		b.SBOMScanner = sbom.NewSyftCLISBOMScanner(context.Layers, effect.NewExecutor(), b.Logger)
-	}
 	if err := b.SBOMScanner.ScanLaunch(context.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON); err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to create Build SBoM \n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create Launch SBoM \n%w", err)
 	}
 
 	return result, nil

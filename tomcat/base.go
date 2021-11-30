@@ -23,6 +23,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/paketo-buildpacks/libpak/sbom"
+
 	"github.com/buildpacks/libcnb"
 	"github.com/heroku/color"
 	"github.com/paketo-buildpacks/libpak"
@@ -110,8 +112,10 @@ func NewBase(
 
 func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	b.LayerContributor.Logger = b.Logger
+	var syftArtifacts []sbom.SyftArtifact
 
 	return b.LayerContributor.Contribute(layer, func() (libcnb.Layer, error) {
+
 		if err := b.ContributeConfiguration(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute configuration\n%w", err)
 		}
@@ -119,18 +123,38 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		if err := b.ContributeAccessLogging(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute access logging\n%w", err)
 		}
+		if syftArtifact, err := b.AccessLoggingDependency.AsSyftArtifact(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.AccessLoggingDependency.Name, err)
+		} else {
+			syftArtifacts = append(syftArtifacts, syftArtifact)
+		}
 
 		if err := b.ContributeLifecycle(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute lifecycle\n%w", err)
+		}
+		if syftArtifact, err := b.LifecycleDependency.AsSyftArtifact(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.LifecycleDependency.Name, err)
+		} else {
+			syftArtifacts = append(syftArtifacts, syftArtifact)
 		}
 
 		if err := b.ContributeLogging(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute logging\n%w", err)
 		}
+		if syftArtifact, err := b.LoggingDependency.AsSyftArtifact(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.LoggingDependency.Name, err)
+		} else {
+			syftArtifacts = append(syftArtifacts, syftArtifact)
+		}
 
 		if b.ExternalConfigurationDependency != nil {
 			if err := b.ContributeExternalConfiguration(layer); err != nil {
 				return libcnb.Layer{}, fmt.Errorf("unable to contribute external configuration\n%w", err)
+			}
+			if syftArtifact, err := b.ExternalConfigurationDependency.AsSyftArtifact(); err != nil {
+				return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.ExternalConfigurationDependency.Name, err)
+			} else {
+				syftArtifacts = append(syftArtifacts, syftArtifact)
 			}
 		}
 
@@ -151,6 +175,10 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		}
 
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
+
+		if err := b.writeDependencySBOM(layer, syftArtifacts); err != nil {
+			return libcnb.Layer{}, err
+		}
 
 		return layer, nil
 	})
@@ -305,6 +333,17 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 		return fmt.Errorf("unable to write file %s\n%w", file, err)
 	}
 
+	return nil
+}
+
+func (b Base) writeDependencySBOM(layer libcnb.Layer, syftArtifacts []sbom.SyftArtifact) error {
+
+	sbomPath := layer.SBOMPath(libcnb.SyftJSON)
+	dep := sbom.NewSyftDependency(layer.Path, syftArtifacts)
+	b.Logger.Debugf("Writing Syft SBOM at %s: %+v", sbomPath, dep)
+	if err := dep.WriteTo(sbomPath); err != nil {
+		return fmt.Errorf("unable to write SBOM\n%w", err)
+	}
 	return nil
 }
 
