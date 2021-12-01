@@ -152,7 +152,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 				return libcnb.Layer{}, fmt.Errorf("unable to contribute external configuration\n%w", err)
 			}
 			if syftArtifact, err := b.ExternalConfigurationDependency.AsSyftArtifact(); err != nil {
-				return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.ExternalConfigurationDependency.Name, err)
+				return libcnb.Layer{}, fmt.Errorf("unable to get Syft Artifact for dependency: %s, \n%w", b.ExternalConfigurationDependency.Name, err)
 			} else {
 				syftArtifacts = append(syftArtifacts, syftArtifact)
 			}

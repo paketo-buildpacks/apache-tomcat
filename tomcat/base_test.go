@@ -35,7 +35,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		ctx    libcnb.BuildContext
+		ctx libcnb.BuildContext
 	)
 
 	it.Before(func() {
@@ -92,9 +92,6 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		layer, err := ctx.Layers.Layer("test-layer")
-		Expect(err).NotTo(HaveOccurred())
-
 		contributor, entries := tomcat.NewBase(
 			ctx.Application.Path,
 			ctx.Buildpack.Path,
@@ -107,6 +104,9 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			dc,
 		)
 		Expect(entries).To(HaveLen(0))
+
+		layer, err := ctx.Layers.Layer("test-layer")
+		Expect(err).NotTo(HaveOccurred())
 
 		layer, err = contributor.Contribute(layer)
 		Expect(err).NotTo(HaveOccurred())
