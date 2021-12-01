@@ -142,7 +142,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute logging\n%w", err)
 		}
 		if syftArtifact, err := b.LoggingDependency.AsSyftArtifact(); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.LoggingDependency.Name, err)
+			return libcnb.Layer{}, fmt.Errorf("unable to get Syft Artifact for dependency: %s, \n%w", b.LoggingDependency.Name, err)
 		} else {
 			syftArtifacts = append(syftArtifacts, syftArtifact)
 		}
