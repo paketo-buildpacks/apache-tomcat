@@ -88,10 +88,6 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 	}
 
-	if strings.HasPrefix(tomcatDep.Version, "7") {
-		dc.Logger.Headerf("%s Apache Tomcat version 7 is End-of-Life, this is the last release that will contain version 7", color.YellowString("WARNING: "))
-	}
-
 	home, be := NewHome(tomcatDep, dc)
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
