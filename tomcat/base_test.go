@@ -34,6 +34,7 @@ import (
 func testBase(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
+
 		ctx    libcnb.BuildContext
 	)
 
