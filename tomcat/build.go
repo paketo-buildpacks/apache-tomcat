@@ -166,7 +166,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		b.SBOMScanner = sbom.NewSyftCLISBOMScanner(context.Layers, effect.NewExecutor(), b.Logger)
 	}
 	if err := b.SBOMScanner.ScanLaunch(context.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON); err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to create Build SBoM \n%w", err)
+		return libcnb.BuildResult{}, fmt.Errorf("unable to create Launch SBoM \n%w", err)
 	}
 
 	return result, nil
