@@ -133,7 +133,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute lifecycle\n%w", err)
 		}
 		if syftArtifact, err := b.LifecycleDependency.AsSyftArtifact(); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to write SBoM for dependency: %s, \n%w", b.LifecycleDependency.Name, err)
+			return libcnb.Layer{}, fmt.Errorf("unable to get Syft Artifact for dependency: %s, \n%w", b.LifecycleDependency.Name, err)
 		} else {
 			syftArtifacts = append(syftArtifacts, syftArtifact)
 		}
