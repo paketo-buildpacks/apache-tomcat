@@ -48,7 +48,6 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		ctx.Layers.Path, err = ioutil.TempDir("", "base-layers")
 		Expect(err).NotTo(HaveOccurred())
-
 	})
 
 	it.After(func() {
