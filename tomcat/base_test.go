@@ -103,7 +103,17 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			loggingDep,
 			dc,
 		)
-		Expect(entries).To(HaveLen(0))
+
+		Expect(entries).To(HaveLen(3))
+		Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(entries[0].Build).To(BeFalse())
+		Expect(entries[0].Launch).To(BeTrue())
+		Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(entries[1].Build).To(BeFalse())
+		Expect(entries[1].Launch).To(BeTrue())
+		Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+		Expect(entries[2].Build).To(BeFalse())
+		Expect(entries[2].Launch).To(BeTrue())
 
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
@@ -178,7 +188,20 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 		contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
-		Expect(entries).To(HaveLen(0))
+
+		Expect(entries).To(HaveLen(4))
+		Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(entries[0].Build).To(BeFalse())
+		Expect(entries[0].Launch).To(BeTrue())
+		Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(entries[1].Build).To(BeFalse())
+		Expect(entries[1].Launch).To(BeTrue())
+		Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+		Expect(entries[2].Build).To(BeFalse())
+		Expect(entries[2].Launch).To(BeTrue())
+		Expect(entries[3].Name).To(Equal("tomcat-external-configuration"))
+		Expect(entries[3].Build).To(BeFalse())
+		Expect(entries[3].Launch).To(BeTrue())
 
 		layer, err = contrib.Contribute(layer)
 		Expect(err).NotTo(HaveOccurred())
@@ -238,7 +261,19 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			dc := libpak.DependencyCache{CachePath: "testdata"}
 
 			contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
-			Expect(entries).To(HaveLen(0))
+			Expect(entries).To(HaveLen(4))
+			Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+			Expect(entries[0].Build).To(BeFalse())
+			Expect(entries[0].Launch).To(BeTrue())
+			Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+			Expect(entries[1].Build).To(BeFalse())
+			Expect(entries[1].Launch).To(BeTrue())
+			Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+			Expect(entries[2].Build).To(BeFalse())
+			Expect(entries[2].Launch).To(BeTrue())
+			Expect(entries[3].Name).To(Equal("tomcat-external-configuration"))
+			Expect(entries[3].Build).To(BeFalse())
+			Expect(entries[3].Launch).To(BeTrue())
 
 			layer, err := ctx.Layers.Layer("test-layer")
 			Expect(err).NotTo(HaveOccurred())
