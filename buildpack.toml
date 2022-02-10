@@ -75,7 +75,7 @@ api = "0.7"
     purl = "pkg:generic/apache-tomcat@8.5.75"
     sha256 = "22c538f628ed03bd15b73951c73b6124a43e5148e8c6ba14cd890f16493a36d8"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.75/bin/apache-tomcat-8.5.75.tar.gz"
+    uri = "https://downloads.apache.org/tomcat/tomcat-8/v8.5.75/bin/apache-tomcat-8.5.75.tar.gz"
     version = "8.5.75"
 
     [[metadata.dependencies.licenses]]
