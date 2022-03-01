@@ -27,7 +27,7 @@ import (
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/sclevine/spec"
 
-	"github.com/paketo-buildpacks/apache-tomcat/tomcat"
+	"github.com/paketo-buildpacks/apache-tomcat/v7/tomcat"
 )
 
 func testHome(t *testing.T, context spec.G, it spec.S) {
