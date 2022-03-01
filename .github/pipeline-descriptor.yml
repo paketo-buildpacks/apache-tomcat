@@ -22,19 +22,19 @@ dependencies:
   version_pattern: "8\\.[\\d]+\\.[\\d]+"
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
-    uri: https://downloads.apache.org/tomcat/tomcat-8
+    uri: https://archive.apache.org/dist/tomcat/tomcat-8
 - name:            Tomcat 9
   id:              tomcat
   version_pattern: "9\\.[\\d]+\\.[\\d]+"
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
-    uri: https://downloads.apache.org/tomcat/tomcat-9
+    uri: https://archive.apache.org/dist/tomcat/tomcat-9
 - name:            Tomcat 10
   id:              tomcat
   version_pattern: "10\\.[\\d]+\\.[\\d]+"
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
-    uri: https://downloads.apache.org/tomcat/tomcat-10
+    uri: https://archive.apache.org/dist/tomcat/tomcat-10
 - id:   tomcat-access-logging-support
   uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
   with:
