@@ -38,6 +38,8 @@ When this buildpack runs on the [Tiny stack](https://paketo.io/docs/concepts/sta
 | `$BP_JAVA_APP_SERVER`               | The application server to use. It defaults to `` (empty string) which means that order dictates which Java application server is installed. The first Java application server buildpack to run will be picked. |
 | `$BP_TOMCAT_CONTEXT_PATH`           | The context path to mount the application at.  Defaults to empty (`ROOT`).                                                                                                                                     |
 | `$BP_TOMCAT_EXT_CONF_SHA256`        | The SHA256 hash of the external configuration package                                                                                                                                                          |
+| `$BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED` | Disable the `org.apache.tomcat.util.digester.EnvironmentPropertySource` config, to support loading configuration from environment variables.
+|
 | `$BP_TOMCAT_EXT_CONF_STRIP`         | The number of directory levels to strip from the external configuration package.  Defaults to `0`.                                                                                                             |
 | `$BP_TOMCAT_EXT_CONF_URI`           | The download URI of the external configuration package                                                                                                                                                         |
 | `$BP_TOMCAT_EXT_CONF_VERSION`       | The version of the external configuration package                                                                                                                                                              |
@@ -55,6 +57,10 @@ The artifacts that the repository provides must be in TAR format and must follow
     ├── web.xml
     ├── ...
 ```
+
+### Environment Property Source
+When the Environment Property Source is configured, configuration for Tomcats [configuration files](https://tomcat.apache.org/tomcat-9.0-doc/config/systemprops.html) can be loaded
+from environment variables. To use this feature, the name of the environment variable must match the name of the property.
 
 ## Bindings
 The buildpack optionally accepts the following bindings:

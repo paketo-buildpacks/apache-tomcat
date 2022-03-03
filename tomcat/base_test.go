@@ -141,6 +141,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.Readlink(file)).To(Equal(ctx.Application.Path))
 
 		Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
+		Expect(layer.LaunchEnvironment["CATALINA_OPTS.default"]).To(Equal("-Dorg.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource"))
 	})
 
 	it("contributes custom configuration", func() {

@@ -48,6 +48,11 @@ api = "0.7"
     name = "BP_JAVA_APP_SERVER"
 
   [[metadata.configurations]]
+    default = "false"
+    description = "Disable the EnvironmentPropertySource for reading environment variables into tomcat config files"
+    name = "BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED"
+
+  [[metadata.configurations]]
     build = true
     description = "the SHA256 hash of the external Tomcat configuration archive"
     name = "BP_TOMCAT_EXT_CONF_SHA256"
