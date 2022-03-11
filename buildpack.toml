@@ -43,6 +43,12 @@ api = "0.7"
 
   [[metadata.configurations]]
     build = true
+    default = ""
+    description = "the application server to use"
+    name = "BP_JAVA_APP_SERVER"
+
+  [[metadata.configurations]]
+    build = true
     description = "the SHA256 hash of the external Tomcat configuration archive"
     name = "BP_TOMCAT_EXT_CONF_SHA256"
 
