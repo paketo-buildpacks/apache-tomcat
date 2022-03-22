@@ -49,7 +49,7 @@ api = "0.7"
 
   [[metadata.configurations]]
     default = "false"
-    description = "Disable the EnvironmentPropertySource for reading environment variables into tomcat config files"
+    description = "Disable Tomcat's EnvironmentPropertySource"
     name = "BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED"
 
   [[metadata.configurations]]
