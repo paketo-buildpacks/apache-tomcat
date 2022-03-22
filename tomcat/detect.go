@@ -23,6 +23,8 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libjvm"
+	"github.com/paketo-buildpacks/libpak"
+	"github.com/paketo-buildpacks/libpak/bard"
 )
 
 const (
@@ -30,11 +32,26 @@ const (
 	PlanEntryJVMApplicationPackage = "jvm-application-package"
 	PlanEntryJRE                   = "jre"
 	PlanEntrySyft                  = "syft"
+	PlanEntryJavaApplicationServer = "java-app-server"
+	JavaAppServerTomcat            = "tomcat"
 )
 
-type Detect struct{}
+type Detect struct {
+	Logger bard.Logger
+}
 
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
+	if err != nil {
+		return libcnb.DetectResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
+	}
+
+	appServer, _ := cr.Resolve("BP_JAVA_APP_SERVER")
+	if appServer != "" && appServer != JavaAppServerTomcat {
+		d.Logger.Debugf("failed to match requested app server of [%s], buildpack supports [%s]", appServer, JavaAppServerTomcat)
+		return libcnb.DetectResult{Pass: false}, nil
+	}
+
 	m, err := libjvm.NewManifest(context.Application.Path)
 	if err != nil {
 		return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
@@ -50,12 +67,14 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 			{
 				Provides: []libcnb.BuildPlanProvide{
 					{Name: PlanEntryJVMApplication},
+					{Name: PlanEntryJavaApplicationServer},
 				},
 				Requires: []libcnb.BuildPlanRequire{
 					{Name: PlanEntrySyft},
 					{Name: PlanEntryJRE, Metadata: map[string]interface{}{"launch": true}},
 					{Name: PlanEntryJVMApplicationPackage},
 					{Name: PlanEntryJVMApplication},
+					{Name: PlanEntryJavaApplicationServer, Metadata: map[string]interface{}{"server": JavaAppServerTomcat}},
 				},
 			},
 		},

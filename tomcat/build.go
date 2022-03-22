@@ -42,6 +42,7 @@ type Build struct {
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	result := libcnb.NewBuildResult()
+
 	m, err := libjvm.NewManifest(context.Application.Path)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)

@@ -65,12 +65,14 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 					{
 						Provides: []libcnb.BuildPlanProvide{
 							{Name: "jvm-application"},
+							{Name: "java-app-server"},
 						},
 						Requires: []libcnb.BuildPlanRequire{
 							{Name: "syft"},
 							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
 							{Name: "jvm-application-package"},
 							{Name: "jvm-application"},
+							{Name: "java-app-server", Metadata: map[string]interface{}{"server": "tomcat"}},
 						},
 					},
 				},
@@ -90,6 +92,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 					{
 						Provides: []libcnb.BuildPlanProvide{
 							{Name: "jvm-application"},
+							{Name: "java-app-server"},
 							{Name: "jvm-application-package"},
 						},
 						Requires: []libcnb.BuildPlanRequire{
@@ -97,10 +100,56 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
 							{Name: "jvm-application-package"},
 							{Name: "jvm-application"},
+							{Name: "java-app-server", Metadata: map[string]interface{}{"server": "tomcat"}},
 						},
 					},
 				},
 			}))
+		})
+	})
+
+	context("BP_JAVA_APP_SERVER is set to `tomcat`", func() {
+		it.Before(func() {
+			Expect(os.Setenv("BP_JAVA_APP_SERVER", "tomcat")).To(Succeed())
+		})
+
+		it.After(func() {
+			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
+		})
+
+		it("contributes Tomcat", func() {
+			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
+				Pass: true,
+				Plans: []libcnb.BuildPlan{
+					{
+						Provides: []libcnb.BuildPlanProvide{
+							{Name: "jvm-application"},
+							{Name: "java-app-server"},
+						},
+						Requires: []libcnb.BuildPlanRequire{
+							{Name: "syft"},
+							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
+							{Name: "jvm-application-package"},
+							{Name: "jvm-application"},
+							{Name: "java-app-server", Metadata: map[string]interface{}{"server": "tomcat"}},
+						},
+					},
+				},
+			}))
+		})
+	})
+
+	context("BP_JAVA_APP_SERVER is set to `foo`", func() {
+		it.Before(func() {
+			Expect(os.Setenv("BP_JAVA_APP_SERVER", "foo")).To(Succeed())
+		})
+
+		it.After(func() {
+			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
+		})
+
+		it("fails", func() {
+			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{Pass: false}))
 		})
 	})
 }
