@@ -43,6 +43,13 @@ type Build struct {
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	result := libcnb.NewBuildResult()
 
+	pr := libpak.PlanEntryResolver{Plan: context.Plan}
+	if _, found, err := pr.Resolve(PlanEntryJavaApplicationServer); err != nil {
+		return libcnb.BuildResult{}, fmt.Errorf("unable to resolve plan entry\n%w", err)
+	} else if !found {
+		return result, nil
+	}
+
 	m, err := libjvm.NewManifest(context.Application.Path)
 	if err != nil {
 		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)

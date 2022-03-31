@@ -45,6 +45,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 		ctx.Plan = libcnb.BuildpackPlan{Entries: []libcnb.BuildpackPlanEntry{
 			{Name: "jvm-application"},
+			{Name: "java-app-server"},
 		}}
 		sbomScanner = mocks.SBOMScanner{}
 		sbomScanner.On("ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON).Return(nil)
@@ -60,8 +61,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
-		Expect(result.Unmet).To(HaveLen(1))
+		Expect(result.Unmet).To(HaveLen(2))
 		Expect(result.Unmet[0].Name).To(Equal("jvm-application"))
+		Expect(result.Unmet[1].Name).To(Equal("java-app-server"))
 	})
 
 	it("does not contribute Tomcat if Main-Class", func() {
@@ -73,8 +75,54 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(result.Layers).To(BeEmpty())
-		Expect(result.Unmet).To(HaveLen(1))
+		Expect(result.Unmet).To(HaveLen(2))
 		Expect(result.Unmet[0].Name).To(Equal("jvm-application"))
+		Expect(result.Unmet[1].Name).To(Equal("java-app-server"))
+	})
+
+	it("does not contribute Tomcat if java-app-server missing from buildplan", func() {
+		Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "WEB-INF"), 0755)).To(Succeed())
+
+		ctx.Buildpack.Metadata = map[string]interface{}{
+			"dependencies": []map[string]interface{}{
+				{
+					"id":      "tomcat",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat@1.1.1",
+					"cpes":    "cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-access-logging-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-access-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-lifecycle-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-lifecycle-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-lifecycle-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-logging-support",
+					"version": "1.1.1",
+					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+			},
+		}
+		ctx.StackID = "test-stack-id"
+		ctx.Plan.Entries = ctx.Plan.Entries[0:1] // remove second plan entry, java-app-server
+
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(result.Layers).To(BeEmpty())
 	})
 
 	it("contributes Tomcat", func() {

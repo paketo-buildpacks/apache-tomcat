@@ -48,6 +48,7 @@ api = "0.7"
     name = "BP_JAVA_APP_SERVER"
 
   [[metadata.configurations]]
+    build = true
     default = "false"
     description = "Disable Tomcat's EnvironmentPropertySource"
     name = "BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED"
