@@ -74,7 +74,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 					{Name: PlanEntryJRE, Metadata: map[string]interface{}{"launch": true}},
 					{Name: PlanEntryJVMApplicationPackage},
 					{Name: PlanEntryJVMApplication},
-					{Name: PlanEntryJavaApplicationServer, Metadata: map[string]interface{}{"server": JavaAppServerTomcat}},
+					{Name: PlanEntryJavaApplicationServer},
 				},
 			},
 		},
