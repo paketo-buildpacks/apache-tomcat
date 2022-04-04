@@ -101,7 +101,7 @@ api = "0.7"
     purl = "pkg:generic/apache-tomcat@9.0.62"
     sha256 = "03157728a832cf9c83048cdc28d09600cbb3e4fa087f8b97d74c8b4f34cd89bb"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.62/bin/apache-tomcat-9.0.62.tar.gz"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.62/bin/apache-tomcat-9.0.62.tar.gz"
     version = "9.0.62"
 
     [[metadata.dependencies.licenses]]
