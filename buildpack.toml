@@ -86,7 +86,7 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@8.5.81"
     sha256 = "b91d6f6e5febde99cfe0e71aa0dc069940c64e944409d7aa4e39eb2887f36618"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.81/bin/apache-tomcat-8.5.81.tar.gz"
     version = "8.5.81"
 
@@ -100,7 +100,7 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@9.0.64"
     sha256 = "8a3cde1ff47e769065ea66470909b4e3b1a6d6ae5bd1b9ca55314c67ddd44f23"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.64/bin/apache-tomcat-9.0.64.tar.gz"
     version = "9.0.64"
 
@@ -114,7 +114,7 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@10.0.22"
     sha256 = "e726f6559ee9210347e93a44db2a493204887da55ca917320fbc86295404a1fd"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.22/bin/apache-tomcat-10.0.22.tar.gz"
     version = "10.0.22"
 
@@ -128,7 +128,7 @@ api = "0.7"
     name = "Apache Tomcat Access Logging Support"
     purl = "pkg:generic/tomcat-access-logging-support@3.3.0"
     sha256 = "49f9acac1bed65c683276d662c985ed63c685a603e7f5b72f732673bb826a0d4"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://repo.spring.io/release/org/cloudfoundry/tomcat-access-logging-support/3.3.0.RELEASE/tomcat-access-logging-support-3.3.0.RELEASE.jar"
     version = "3.3.0"
 
@@ -142,7 +142,7 @@ api = "0.7"
     name = "Apache Tomcat Lifecycle Support"
     purl = "pkg:generic/tomcat-lifecycle-support@3.3.0"
     sha256 = "b725f4cae0be4a999a08ed978b29081edfd68a187a926ed740cc1f8e9aca70ce"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://repo.spring.io/release/org/cloudfoundry/tomcat-lifecycle-support/3.3.0.RELEASE/tomcat-lifecycle-support-3.3.0.RELEASE.jar"
     version = "3.3.0"
 
@@ -156,19 +156,13 @@ api = "0.7"
     name = "Apache Tomcat Logging Support"
     purl = "pkg:generic/tomcat-logging-support@3.3.0"
     sha256 = "46db58c1d8ef2555d7053a12d669daefb676e9a17a2a1771cd60c95bcb210b0d"
-    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    stacks = ["*"]
     uri = "https://repo.spring.io/release/org/cloudfoundry/tomcat-logging-support/3.3.0.RELEASE/tomcat-logging-support-3.3.0.RELEASE.jar"
     version = "3.3.0"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
       uri = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
-
-[[stacks]]
-  id = "io.buildpacks.stacks.bionic"
-
-[[stacks]]
-  id = "io.paketo.stacks.tiny"
 
 [[stacks]]
   id = "*"

@@ -199,7 +199,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("contributes Tomcat on Tiny", func() {
-		ctx.StackID = libpak.TinyStackID
+		ctx.StackID = libpak.BionicTinyStackID
 
 		Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "WEB-INF"), 0755)).To(Succeed())
 
@@ -208,21 +208,21 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				{
 					"id":      "tomcat",
 					"version": "1.1.2",
-					"stacks":  []interface{}{libpak.TinyStackID},
+					"stacks":  []interface{}{libpak.BionicTinyStackID},
 					"purl":    "pkg:generic/tomcat@1.1.1",
 					"cpes":    []interface{}{"cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*"},
 				},
 				{
 					"id":      "tomcat-access-logging-support",
 					"version": "1.1.1",
-					"stacks":  []interface{}{libpak.TinyStackID},
+					"stacks":  []interface{}{libpak.BionicTinyStackID},
 					"purl":    "pkg:generic/tomcat-access-logging-support@3.3.0",
 					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.3.0:*:*:*:*:*:*:*"},
 				},
 				{
 					"id":      "tomcat-lifecycle-support",
 					"version": "1.1.1",
-					"stacks":  []interface{}{libpak.TinyStackID},
+					"stacks":  []interface{}{libpak.BionicTinyStackID},
 					"purl":    "pkg:generic/tomcat-lifecycle-logging-support@1.1.1",
 					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-lifecycle-logging-support:1.1.1:*:*:*:*:*:*:*"},
 				},
@@ -230,7 +230,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					"id":      "tomcat-logging-support",
 					"version": "1.1.1",
 					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
-					"stacks":  []interface{}{libpak.TinyStackID},
+					"stacks":  []interface{}{libpak.BionicTinyStackID},
 					"purl":    "pkg:generic/tomcat-logging-support@1.1.1",
 					"cpes":    []interface{}{"cpe:2.3:a:cloudfoundry:tomcat-logging-support:1.1.1:*:*:*:*:*:*:*"},
 				},
