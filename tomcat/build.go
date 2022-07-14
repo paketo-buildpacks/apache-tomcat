@@ -149,7 +149,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	command := "bash"
 	arguments := []string{"catalina.sh", "run"}
 
-	if context.StackID == libpak.TinyStackID {
+	if context.StackID == libpak.BionicTinyStackID || context.StackID == libpak.JammyTinyStackID {
 		command, arguments = b.tinyStartCommand(
 			filepath.Join(context.Layers.Path, "tomcat"),
 			filepath.Join(context.Layers.Path, "catalina-base"),
