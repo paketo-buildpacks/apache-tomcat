@@ -109,14 +109,14 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:10.0.22:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:10.0.23:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@10.0.22"
-    sha256 = "e726f6559ee9210347e93a44db2a493204887da55ca917320fbc86295404a1fd"
+    purl = "pkg:generic/apache-tomcat@10.0.23"
+    sha256 = "575c99a2aeed61e26b2f379bd0f8c9e44a4ecc9509760aa81c20bb7126b7fd3d"
     stacks = ["*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.22/bin/apache-tomcat-10.0.22.tar.gz"
-    version = "10.0.22"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz"
+    version = "10.0.23"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
