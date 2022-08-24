@@ -180,6 +180,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		}
 
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
+		layer.LaunchEnvironment.Default("CATALINA_TMPDIR", "/tmp")
 
 		if err := b.writeDependencySBOM(layer, syftArtifacts); err != nil {
 			return libcnb.Layer{}, err
