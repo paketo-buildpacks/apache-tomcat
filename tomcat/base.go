@@ -116,6 +116,10 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 
 	return b.LayerContributor.Contribute(layer, func() (libcnb.Layer, error) {
 
+		if err := os.Chmod(filepath.Join(layer.Path), 0775); err != nil{
+			return  libcnb.Layer{}, fmt.Errorf("unable to set catalina base dir permissions\n%w", err)
+		}
+
 		if err := b.ContributeConfiguration(layer); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to contribute configuration\n%w", err)
 		}
@@ -164,7 +168,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		}
 
 		file = filepath.Join(layer.Path, "webapps")
-		if err := os.MkdirAll(file, 0755); err != nil {
+		if err := os.MkdirAll(file, 0775); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to create directory %s\n%w", file, err)
 		}
 
@@ -210,7 +214,7 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 
 func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	file := filepath.Join(layer.Path, "conf")
-	if err := os.MkdirAll(file, 0755); err != nil {
+	if err := os.MkdirAll(file, 0775); err != nil {
 		return fmt.Errorf("unable to create directory %s\n%w", file, err)
 	}
 
@@ -334,7 +338,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 	s := fmt.Sprintf(`CLASSPATH="%s"`, file)
 
 	file = filepath.Join(layer.Path, "bin", "setenv.sh")
-	if err = ioutil.WriteFile(file, []byte(s), 0755); err != nil {
+	if err = ioutil.WriteFile(file, []byte(s), 0775); err != nil {
 		return fmt.Errorf("unable to write file %s\n%w", file, err)
 	}
 

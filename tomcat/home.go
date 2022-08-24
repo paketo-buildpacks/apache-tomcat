@@ -19,6 +19,7 @@ package tomcat
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak"
@@ -45,6 +46,9 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		h.Logger.Bodyf("Expanding to %s", layer.Path)
 		if err := crush.ExtractTarGz(artifact, layer.Path, 1); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to expand Tomcat\n%w", err)
+		}
+		if err := os.Chmod(filepath.Join(layer.Path), 0775); err != nil{
+			return  libcnb.Layer{}, fmt.Errorf("unable to set catalina home dir permissions\n%w", err)
 		}
 
 		layer.LaunchEnvironment.Default("CATALINA_HOME", layer.Path)
