@@ -18,7 +18,6 @@ package tomcat
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -180,6 +179,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		}
 
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
+		layer.LaunchEnvironment.Default("CATALINA_TMPDIR", "/tmp")
 
 		if err := b.writeDependencySBOM(layer, syftArtifacts); err != nil {
 			return libcnb.Layer{}, err
@@ -334,7 +334,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 	s := fmt.Sprintf(`CLASSPATH="%s"`, file)
 
 	file = filepath.Join(layer.Path, "bin", "setenv.sh")
-	if err = ioutil.WriteFile(file, []byte(s), 0755); err != nil {
+	if err = os.WriteFile(file, []byte(s), 0755); err != nil {
 		return fmt.Errorf("unable to write file %s\n%w", file, err)
 	}
 

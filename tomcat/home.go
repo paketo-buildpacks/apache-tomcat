@@ -43,7 +43,7 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 
 	return h.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
 		h.Logger.Bodyf("Expanding to %s", layer.Path)
-		if err := crush.ExtractTarGz(artifact, layer.Path, 1); err != nil {
+		if err := crush.Extract(artifact, layer.Path, 1); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to expand Tomcat\n%w", err)
 		}
 

@@ -18,7 +18,6 @@ package tomcat_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -41,13 +40,13 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 
-		ctx.Application.Path, err = ioutil.TempDir("", "base-application")
+		ctx.Application.Path, err = os.MkdirTemp("", "base-application")
 		Expect(err).NotTo(HaveOccurred())
 
-		ctx.Buildpack.Path, err = ioutil.TempDir("", "base-buildpack")
+		ctx.Buildpack.Path, err = os.MkdirTemp("", "base-buildpack")
 		Expect(err).NotTo(HaveOccurred())
 
-		ctx.Layers.Path, err = ioutil.TempDir("", "base-layers")
+		ctx.Layers.Path, err = os.MkdirTemp("", "base-layers")
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -59,13 +58,13 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 	it("contributes catalina base", func() {
 		Expect(os.MkdirAll(filepath.Join(ctx.Buildpack.Path, "resources"), 0755)).To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
 			To(Succeed())
 
 		accessLoggingDep := libpak.BuildpackDependency{
@@ -129,7 +128,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-access-logging-support.jar")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-lifecycle-support.jar")).To(BeARegularFile())
 		Expect(filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")).To(BeARegularFile())
-		Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal(
+		Expect(os.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal(
 			[]byte(fmt.Sprintf(`CLASSPATH="%s"`, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")))))
 		Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
 		Expect(filepath.Join(layer.Path, "temp")).To(BeADirectory())
@@ -146,13 +145,13 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 	it("contributes custom configuration", func() {
 		Expect(os.MkdirAll(filepath.Join(ctx.Buildpack.Path, "resources"), 0755)).To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
 			To(Succeed())
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
+		Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
 			To(Succeed())
 
 		externalConfigurationDep := libpak.BuildpackDependency{
@@ -221,13 +220,13 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		it("contributes custom configuration with directory", func() {
 			Expect(os.MkdirAll(filepath.Join(ctx.Buildpack.Path, "resources"), 0755)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
 				To(Succeed())
 
 			externalConfigurationDep := libpak.BuildpackDependency{
@@ -295,15 +294,15 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			Expect(os.Unsetenv("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED")).To(Succeed())
 		})
 
-	it("environment property source can be disabled", func() {
+		it("environment property source can be disabled", func() {
 			Expect(os.MkdirAll(filepath.Join(ctx.Buildpack.Path, "resources"), 0755)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "context.xml"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "logging.properties"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "server.xml"), []byte{}, 0644)).
 				To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
+			Expect(os.WriteFile(filepath.Join(ctx.Buildpack.Path, "resources", "web.xml"), []byte{}, 0644)).
 				To(Succeed())
 
 			accessLoggingDep := libpak.BuildpackDependency{
@@ -367,7 +366,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-access-logging-support.jar")).To(BeARegularFile())
 			Expect(filepath.Join(layer.Path, "lib", "stub-tomcat-lifecycle-support.jar")).To(BeARegularFile())
 			Expect(filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")).To(BeARegularFile())
-			Expect(ioutil.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal(
+			Expect(os.ReadFile(filepath.Join(layer.Path, "bin", "setenv.sh"))).To(Equal(
 				[]byte(fmt.Sprintf(`CLASSPATH="%s"`, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar")))))
 			Expect(layer.LaunchEnvironment["CATALINA_BASE.default"]).To(Equal(layer.Path))
 			Expect(filepath.Join(layer.Path, "temp")).To(BeADirectory())
