@@ -1,6 +1,6 @@
 # `gcr.io/paketo-buildpacks/apache-tomcat`
 
-The Paketo Apache Tomcat Buildpack is a Cloud Native Buildpack that contributes Apache Tomcat and Process Types for WARs.
+The Paketo Buildpack for Apache Tomcat is a Cloud Native Buildpack that contributes Apache Tomcat and Process Types for WARs.
 
 ## Behavior
 

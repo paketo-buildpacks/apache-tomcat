@@ -19,7 +19,7 @@ api = "0.7"
   homepage = "https://github.com/paketo-buildpacks/apache-tomcat"
   id = "paketo-buildpacks/apache-tomcat"
   keywords = ["java", "tomcat", "war"]
-  name = "Paketo Apache Tomcat Buildpack"
+  name = "Paketo Buildpack for Apache Tomcat"
   sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
   version = "{{.version}}"
 
