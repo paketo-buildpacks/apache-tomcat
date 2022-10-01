@@ -98,7 +98,7 @@ jobs:
               with:
                 author: ${{ secrets.JAVA_GITHUB_USERNAME }} <${{ secrets.JAVA_GITHUB_USERNAME }}@users.noreply.github.com>
                 body: Bumps `Tomcat 10.1` from `${{ steps.buildpack.outputs.old-version }}` to `${{ steps.buildpack.outputs.new-version }}`.
-                branch: update/buildpack/tomcat-10
+                branch: update/buildpack/tomcat-10-1
                 commit-message: |-
                     Bump Tomcat 10.1 from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
 
