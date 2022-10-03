@@ -35,14 +35,14 @@ dependencies:
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
     uri: https://archive.apache.org/dist/tomcat/tomcat-10
-    version_regex: "(10)\\.(0)\\.[\\d]+"
+    version_regex: "(10)\\.(0)\\.([\\d]+)"
 - name:            Tomcat 10.1
   id:              tomcat
   version_pattern: "10\\.1\\.[\\d]+"
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
     uri: https://archive.apache.org/dist/tomcat/tomcat-10
-    version_regex: "(10)\\.(1)\\.[\\d]+"
+    version_regex: "(10)\\.(1)\\.([\\d]+)"
 - id:   tomcat-access-logging-support
   uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
   with:
