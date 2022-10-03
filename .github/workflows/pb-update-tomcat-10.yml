@@ -45,6 +45,7 @@ jobs:
               uses: docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
               with:
                 uri: https://archive.apache.org/dist/tomcat/tomcat-10
+                version_regex: (10)\.(0)\.[\d]+
             - name: Update Buildpack Dependency
               id: buildpack
               run: |-
