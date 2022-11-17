@@ -204,7 +204,6 @@ func (b Build) tinyStartCommand(homePath, basePath string, loggingDep libpak.Bui
 	arguments = append(arguments,
 		fmt.Sprintf("-Dcatalina.home=%s", homePath),
 		fmt.Sprintf("-Dcatalina.base=%s", basePath),
-		fmt.Sprintf("-Djava.io.tmpdir=%s", filepath.Join(basePath, "/temp")),
 		"org.apache.catalina.startup.Bootstrap", "start",
 	)
 

@@ -251,7 +251,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 					"catalina-base/bin/tomcat-logging-support-1.1.1.RELEASE.jar:tomcat/bin/bootstrap.jar:tomcat/bin/tomcat-juli.jar",
 					"-Dcatalina.home=tomcat",
 					"-Dcatalina.base=catalina-base",
-					"-Djava.io.tmpdir=catalina-base/temp",
 					"org.apache.catalina.startup.Bootstrap",
 					"start",
 				},
