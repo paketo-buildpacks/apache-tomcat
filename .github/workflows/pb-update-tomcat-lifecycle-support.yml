@@ -47,6 +47,7 @@ jobs:
                 artifact_id: tomcat-lifecycle-support
                 group_id: org.cloudfoundry
                 uri: https://repo.spring.io/release
+                version_regex: ^[\d]+\.[\d]+\.[\d]+\.RELEASE$
             - name: Update Buildpack Dependency
               id: buildpack
               run: |-

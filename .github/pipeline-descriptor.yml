@@ -49,15 +49,18 @@ dependencies:
     uri:         https://repo.spring.io/release
     group_id:    org.cloudfoundry
     artifact_id: tomcat-access-logging-support
+    version_regex: "^[\\d]+\\.[\\d]+\\.[\\d]+\\.RELEASE$"
 - id:   tomcat-lifecycle-support
   uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
   with:
     uri:         https://repo.spring.io/release
     group_id:    org.cloudfoundry
     artifact_id: tomcat-lifecycle-support
+    version_regex: "^[\\d]+\\.[\\d]+\\.[\\d]+\\.RELEASE$"
 - id:   tomcat-logging-support
   uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
   with:
     uri:         https://repo.spring.io/release
     group_id:    org.cloudfoundry
     artifact_id: tomcat-logging-support
+    version_regex: "^[\\d]+\\.[\\d]+\\.[\\d]+\\.RELEASE$"
