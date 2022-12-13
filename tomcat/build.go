@@ -129,7 +129,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 		if !versionExists && !shaExists {
 			v = time.Now().Format(time.RFC3339)
-			b.Logger.Infof("No BP_TOMCAT_EXT_CONF_VERSION or BP_TOMCAT_EXT_CONF_SHA256 provided, using version '%s'", v)
+			b.Logger.Infof(color.YellowString("WARNING: No BP_TOMCAT_EXT_CONF_VERSION or BP_TOMCAT_EXT_CONF_SHA256 provided, so no layer caching will occur."))
 		}
 
 		externalConfigurationDependency = &libpak.BuildpackDependency{

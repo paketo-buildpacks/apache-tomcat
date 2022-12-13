@@ -370,15 +370,9 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}
 			ctx.StackID = "test-stack-id"
 
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")).To(Succeed())
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")).To(Succeed())
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_URI")).To(Succeed())
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
+			t.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
+			t.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")
 		})
 
 		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI, $BP_TOMCAT_EXT_CONF_VERSION and $BP_TOMCAT_EXT_CONF_SHA256 are set", func() {
