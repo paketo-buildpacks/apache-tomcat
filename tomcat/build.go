@@ -22,6 +22,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/paketo-buildpacks/libpak/effect"
 	"github.com/paketo-buildpacks/libpak/sbom"
@@ -123,8 +124,13 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 
 	var externalConfigurationDependency *libpak.BuildpackDependency
 	if uri, ok := cr.Resolve("BP_TOMCAT_EXT_CONF_URI"); ok {
-		v, _ := cr.Resolve("BP_TOMCAT_EXT_CONF_VERSION")
-		s, _ := cr.Resolve("BP_TOMCAT_EXT_CONF_SHA256")
+		v, versionExists := cr.Resolve("BP_TOMCAT_EXT_CONF_VERSION")
+		s, shaExists := cr.Resolve("BP_TOMCAT_EXT_CONF_SHA256")
+
+		if !versionExists && !shaExists {
+			v = time.Now().Format(time.RFC3339)
+			b.Logger.Infof(color.YellowString("WARNING: No BP_TOMCAT_EXT_CONF_VERSION or BP_TOMCAT_EXT_CONF_SHA256 provided, so no layer caching will occur."))
+		}
 
 		externalConfigurationDependency = &libpak.BuildpackDependency{
 			ID:      "tomcat-external-configuration",

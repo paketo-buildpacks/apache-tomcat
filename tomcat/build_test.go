@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/paketo-buildpacks/libpak/sbom/mocks"
 
@@ -341,18 +342,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	context("$BP_TOMCAT_EXT_CONF_URI", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")).To(Succeed())
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")).To(Succeed())
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_URI")).To(Succeed())
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
-		})
-
-		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI is set", func() {
 			Expect(os.MkdirAll(filepath.Join(ctx.Application.Path, "WEB-INF"), 0755)).To(Succeed())
 
 			ctx.Buildpack.Metadata = map[string]interface{}{
@@ -381,9 +370,16 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}
 			ctx.StackID = "test-stack-id"
 
+			t.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
+			t.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")
+		})
+
+		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI, $BP_TOMCAT_EXT_CONF_VERSION and $BP_TOMCAT_EXT_CONF_SHA256 are set", func() {
 			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
 
+			Expect(result.Layers).To(HaveLen(3))
 			Expect(result.Layers[2].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
 				ID:      "tomcat-external-configuration",
 				Name:    "Tomcat External Configuration",
@@ -394,6 +390,55 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			}))
 			sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
 		})
+
+		it("uses time as version if neither $BP_TOMCAT_EXT_CONF_VERSION nor $BP_TOMCAT_EXT_CONF_SHA256 is provided", func() {
+			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
+			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
+
+			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(result.Layers).To(HaveLen(3))
+			version := result.Layers[2].(tomcat.Base).ExternalConfigurationDependency.Version
+			Expect(time.Parse(time.RFC3339, version)).NotTo(BeNil())
+		})
+
+		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI and $BP_TOMCAT_EXT_CONF_VERSION are set", func() {
+			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
+
+			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(result.Layers).To(HaveLen(3))
+			Expect(result.Layers[2].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
+				ID:      "tomcat-external-configuration",
+				Name:    "Tomcat External Configuration",
+				Version: "test-version",
+				URI:     "test-uri",
+				SHA256:  "",
+				Stacks:  []string{ctx.StackID},
+			}))
+			sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
+		})
+
+		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI and $BP_TOMCAT_EXT_CONF_SHA256 are set", func() {
+			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
+
+			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(result.Layers).To(HaveLen(3))
+			Expect(result.Layers[2].(tomcat.Base).ExternalConfigurationDependency).To(Equal(&libpak.BuildpackDependency{
+				ID:      "tomcat-external-configuration",
+				Name:    "Tomcat External Configuration",
+				Version: "",
+				URI:     "test-uri",
+				SHA256:  "test-sha256",
+				Stacks:  []string{ctx.StackID},
+			}))
+			sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
+		})
+
 	})
 
 	it("returns default context path", func() {
