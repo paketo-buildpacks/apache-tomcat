@@ -137,14 +137,14 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.3.0:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.4.0:*:*:*:*:*:*:*"]
     id = "tomcat-access-logging-support"
     name = "Apache Tomcat Access Logging Support"
-    purl = "pkg:generic/tomcat-access-logging-support@3.3.0"
-    sha256 = "49f9acac1bed65c683276d662c985ed63c685a603e7f5b72f732673bb826a0d4"
+    purl = "pkg:generic/tomcat-access-logging-support@3.4.0"
+    sha256 = "b3452d5ffbf0652e0f44958a5cb306a961906280102e5fa1a15840d2ddb6bcc1"
     stacks = ["*"]
-    uri = "https://repo.spring.io/release/org/cloudfoundry/tomcat-access-logging-support/3.3.0.RELEASE/tomcat-access-logging-support-3.3.0.RELEASE.jar"
-    version = "3.3.0"
+    uri = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-access-logging-support/3.4.0.RELEASE/tomcat-access-logging-support-3.4.0.RELEASE.jar"
+    version = "3.4.0"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
