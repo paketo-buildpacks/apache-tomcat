@@ -46,7 +46,7 @@ jobs:
               with:
                 artifact_id: tomcat-lifecycle-support
                 group_id: org.cloudfoundry
-                uri: https://repo.spring.io/release
+                uri: https://repo1.maven.org/maven2
                 version_regex: ^[\d]+\.[\d]+\.[\d]+\.RELEASE$
             - name: Update Buildpack Dependency
               id: buildpack
