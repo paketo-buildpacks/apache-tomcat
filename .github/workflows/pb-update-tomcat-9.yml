@@ -47,7 +47,7 @@ jobs:
                 uri: https://archive.apache.org/dist/tomcat/tomcat-9
             - name: Update Buildpack Dependency
               id: buildpack
-              run: |-
+              run: |
                 #!/usr/bin/env bash
 
                 set -euo pipefail
@@ -81,9 +81,9 @@ jobs:
                   LABEL="semver:patch"
                 fi
 
-                echo "::set-output name=old-version::${OLD_VERSION}"
-                echo "::set-output name=new-version::${VERSION}"
-                echo "::set-output name=version-label::${LABEL}"
+                echo "old-version=${OLD_VERSION}" >> "$GITHUB_OUTPUT"
+                echo "new-version=${VERSION}" >> "$GITHUB_OUTPUT"
+                echo "version-label=${LABEL}" >> "$GITHUB_OUTPUT"
               env:
                 CPE: ${{ steps.dependency.outputs.cpe }}
                 CPE_PATTERN: ""
@@ -107,4 +107,4 @@ jobs:
                 labels: ${{ steps.buildpack.outputs.version-label }}, type:dependency-upgrade
                 signoff: true
                 title: Bump Tomcat 9 from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
-                token: ${{ secrets.JAVA_GITHUB_TOKEN }}
+                token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
