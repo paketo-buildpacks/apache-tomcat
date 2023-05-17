@@ -48,7 +48,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 
 	appServer, _ := cr.Resolve("BP_JAVA_APP_SERVER")
 	if appServer != "" && appServer != JavaAppServerTomcat {
-		d.Logger.Debugf("failed to match requested app server of [%s], buildpack supports [%s]", appServer, JavaAppServerTomcat)
+		d.Logger.Infof("SKIPPED: buildpack does not match requested app server of [%s], buildpack supports [%s]", appServer, JavaAppServerTomcat)
 		return libcnb.DetectResult{Pass: false}, nil
 	}
 
@@ -58,6 +58,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 	}
 
 	if _, ok := m.Get("Main-Class"); ok {
+		d.Logger.Info("SKIPPED: Manifest attribute 'Main-Class' was found")
 		return libcnb.DetectResult{Pass: false}, nil
 	}
 
