@@ -41,7 +41,7 @@ type Detect struct {
 }
 
 func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
-	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &d.Logger)
 	if err != nil {
 		return libcnb.DetectResult{}, fmt.Errorf("unable to create configuration resolver\n%w", err)
 	}
@@ -85,6 +85,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
 		return libcnb.DetectResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
 	} else if os.IsNotExist(err) {
+		d.Logger.Info("PASSED: a WEB-INF directory was not found, this is normal when building from source")
 		return result, nil
 	}
 
