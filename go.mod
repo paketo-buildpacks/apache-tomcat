@@ -7,12 +7,12 @@ require (
 	github.com/heroku/color v0.0.6
 	github.com/onsi/gomega v1.27.7
 	github.com/paketo-buildpacks/libjvm v1.43.0
-	github.com/paketo-buildpacks/libpak v1.65.0
+	github.com/paketo-buildpacks/libpak v1.66.0
 	github.com/sclevine/spec v1.4.0
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.0 // indirect
+	github.com/BurntSushi/toml v1.3.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/creack/pty v1.1.18 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -25,7 +25,6 @@ require (
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.4.1 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
