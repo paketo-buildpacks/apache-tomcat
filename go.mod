@@ -6,8 +6,8 @@ require (
 	github.com/buildpacks/libcnb v1.28.0
 	github.com/heroku/color v0.0.6
 	github.com/onsi/gomega v1.27.8
-	github.com/paketo-buildpacks/libjvm v1.43.1
-	github.com/paketo-buildpacks/libpak v1.66.0
+	github.com/paketo-buildpacks/libjvm v1.43.2
+	github.com/paketo-buildpacks/libpak v1.66.1
 	github.com/sclevine/spec v1.4.0
 )
 
