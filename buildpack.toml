@@ -81,14 +81,14 @@ api = "0.7"
     name = "BP_TOMCAT_VERSION"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:8.5.90:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:8.5.91:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@8.5.90"
-    sha256 = "cc5e6393557c9ec9a29022d1e5ec42b953a22c24aaa8d30a194bb7f1aa60e7b5"
+    purl = "pkg:generic/apache-tomcat@8.5.91"
+    sha256 = "ca6659e253c1f9cc7ab23aa538fdb0381d97e900f7dac305e3e2e20a8a2dbe4d"
     stacks = ["*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.90/bin/apache-tomcat-8.5.90.tar.gz"
-    version = "8.5.90"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.91/bin/apache-tomcat-8.5.91.tar.gz"
+    version = "8.5.91"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
