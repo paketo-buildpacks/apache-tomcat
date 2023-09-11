@@ -331,7 +331,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 
 	b.Logger.Bodyf("Writing %s/bin/setenv.sh", layer.Path)
 
-	s := fmt.Sprintf(`CLASSPATH="%s"`, file)
+	s := fmt.Sprintf(`CLASSPATH="%s:$BPI_TOMCAT_ADDITIONAL_JARS"`, file)
 
 	file = filepath.Join(layer.Path, "bin", "setenv.sh")
 	if err = os.WriteFile(file, []byte(s), 0755); err != nil {
