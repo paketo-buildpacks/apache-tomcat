@@ -200,9 +200,9 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 
 	b.Logger.Bodyf("Copying to %s/lib", layer.Path)
 
-	file := filepath.Join(layer.Path, "lib", filepath.Base(artifact.Name()))
+	file := filepath.Join(layer.Path, "lib", filepath.Base(b.AccessLoggingDependency.URI))
 	if err := sherpa.CopyFile(artifact, file); err != nil {
-		return fmt.Errorf("unable to copy %s to %s\n%w", artifact.Name(), file, err)
+		return fmt.Errorf("unable to copy %s to %s\n%w", filepath.Base(b.AccessLoggingDependency.URI), file, err)
 	}
 
 	return nil
@@ -305,9 +305,9 @@ func (b Base) ContributeLifecycle(layer libcnb.Layer) error {
 
 	b.Logger.Bodyf("Copying to %s/lib", layer.Path)
 
-	file := filepath.Join(layer.Path, "lib", filepath.Base(artifact.Name()))
+	file := filepath.Join(layer.Path, "lib", filepath.Base(b.LifecycleDependency.URI))
 	if err := sherpa.CopyFile(artifact, file); err != nil {
-		return fmt.Errorf("unable to copy %s to %s\n%w", artifact.Name(), file, err)
+		return fmt.Errorf("unable to copy %s to %s\n%w", filepath.Base(b.LifecycleDependency.URI), file, err)
 	}
 
 	return nil
@@ -324,9 +324,9 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 
 	b.Logger.Bodyf("Copying to %s/bin", layer.Path)
 
-	file := filepath.Join(layer.Path, "bin", filepath.Base(artifact.Name()))
+	file := filepath.Join(layer.Path, "bin", filepath.Base(b.LoggingDependency.URI))
 	if err := sherpa.CopyFile(artifact, file); err != nil {
-		return fmt.Errorf("unable to copy %s to %s\n%w", artifact.Name(), file, err)
+		return fmt.Errorf("unable to copy %s to %s\n%w", filepath.Base(b.LoggingDependency.URI), file, err)
 	}
 
 	b.Logger.Bodyf("Writing %s/bin/setenv.sh", layer.Path)
