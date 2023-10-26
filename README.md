@@ -44,6 +44,7 @@ When this buildpack runs on the [Tiny stack](https://paketo.io/docs/concepts/sta
 | `$BP_TOMCAT_EXT_CONF_VERSION`             | The version of the external configuration package                                                                                                                                                                                                          |
 | `$BP_TOMCAT_VERSION`                      | Configure a specific Tomcat version.  This value must _exactly_ match a version available in the buildpack so typically it would configured to a wildcard such as `9.*`.                                                                                   |
 | `BPL_TOMCAT_ACCESS_LOGGING_ENABLED`       | Whether access logging should be activated.  Defaults to inactive.                                                                                                                                                                                         |
+| `BPI_TOMCAT_ADDITIONAL_JARS`              | This should only be used in other buildpacks to include a `jar` to the tomcat classpath. Several `jars` must be separated by `:`. |
 
 ### External Configuration Package
 The artifacts that the repository provides must be in TAR format and must follow the Tomcat archive structure:
@@ -69,8 +70,30 @@ The buildpack optionally accepts the following bindings:
 | --------------------- | ------- | ------------------------------------------------------------------------------------------------- |
 | `<dependency-digest>` | `<uri>` | If needed, the buildpack will fetch the dependency with digest `<dependency-digest>` from `<uri>` |
 
+## Providing Additional JARs to Tomcat
+
+Buildpacks can contribute JARs to the `CLASSPATH` of Tomcat by appending a path to `BPI_TOMCAT_ADDITIONAL_JARS`.
+
+```go
+func (s) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
+	// Copy dependency into the layer
+	file := filepath.Join(layer.Path, filepath.Base(s.Dependency.URI))
+
+	layer, err := s.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
+		if err := sherpa.CopyFile(artifact, file); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to copy artifact to %s\n%w", file, err)
+		}
+		return layer, nil
+	})
+
+	additionalJars := []string{file}
+  // Add dependency to BPI_TOMCAT_ADDITIONAL_JARS
+	layer.LaunchEnvironment.Append("BPI_TOMCAT_ADDITIONAL_JARS", ":", strings.Join(additionalJars, ":"))
+	return layer, nil
+}
+```
+
 ## License
 This buildpack is released under version 2.0 of the [Apache License][a].
 
 [a]: http://www.apache.org/licenses/LICENSE-2.0
-
