@@ -18,6 +18,7 @@ package tomcat
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -51,26 +52,31 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return result, nil
 	}
 
-	m, err := libjvm.NewManifest(context.Application.Path)
-	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
-	}
-
-	if _, ok := m.Get("Main-Class"); ok {
-		for _, entry := range context.Plan.Entries {
-			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+	warFilesExist, _ := b.containsWarFiles(context.Application.Path)
+	if warFilesExist {
+		b.Logger.Infof("%s contains war files.", context.Application.Path)
+	} else {
+		m, err := libjvm.NewManifest(context.Application.Path)
+		if err != nil {
+			return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
 		}
-		return result, nil
-	}
 
-	file := filepath.Join(context.Application.Path, "WEB-INF")
-	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
-	} else if os.IsNotExist(err) {
-		for _, entry := range context.Plan.Entries {
-			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+		if _, ok := m.Get("Main-Class"); ok {
+			for _, entry := range context.Plan.Entries {
+				result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+			}
+			return result, nil
 		}
-		return result, nil
+
+		file := filepath.Join(context.Application.Path, "WEB-INF")
+		if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
+			return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
+		} else if os.IsNotExist(err) {
+			for _, entry := range context.Plan.Entries {
+				result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+			}
+			return result, nil
+		}
 	}
 
 	b.Logger.Title(context.Buildpack)
@@ -144,7 +150,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		}
 	}
 
-	base, bomEntries := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency, externalConfigurationDependency, lifecycleDependency, loggingDependency, dc)
+	base, bomEntries := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency, externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, warFilesExist)
 
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)
@@ -216,4 +222,18 @@ func (b Build) tinyStartCommand(homePath, basePath string, loggingDep libpak.Bui
 	b.Logger.Header(color.YellowString("WARNING: Tomcat will run on the Tiny stack which has no shell. Due to this, some configuration options such as `bin/setenv.sh` and setting `CATALINA_*` environment variables, will not be available"))
 
 	return command, arguments
+}
+
+func (b Build) containsWarFiles(dir string) (bool, error) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".war") {
+			return true, nil
+		}
+	}
+	return false, nil
 }

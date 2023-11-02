@@ -18,8 +18,10 @@ package tomcat
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libjvm"
@@ -52,14 +54,17 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		return libcnb.DetectResult{Pass: false}, nil
 	}
 
-	m, err := libjvm.NewManifest(context.Application.Path)
-	if err != nil {
-		return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
-	}
+	warFilesExist, _ := containsWarFiles(context.Application.Path)
+	if !warFilesExist {
+		m, err := libjvm.NewManifest(context.Application.Path)
+		if err != nil {
+			return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
+		}
 
-	if _, ok := m.Get("Main-Class"); ok {
-		d.Logger.Info("SKIPPED: Manifest attribute 'Main-Class' was found")
-		return libcnb.DetectResult{Pass: false}, nil
+		if _, ok := m.Get("Main-Class"); ok {
+			d.Logger.Info("SKIPPED: Manifest attribute 'Main-Class' was found")
+			return libcnb.DetectResult{Pass: false}, nil
+		}
 	}
 
 	result := libcnb.DetectResult{
@@ -91,4 +96,18 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 
 	result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: PlanEntryJVMApplicationPackage})
 	return result, nil
+}
+
+func containsWarFiles(dir string) (bool, error) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".war") {
+			return true, nil
+		}
+	}
+	return false, nil
 }

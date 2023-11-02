@@ -459,4 +459,77 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 	})
 
+	it("contributes Tomcat with war files", func() {
+		Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "test.war"), []byte(`test`), 0644)).To(Succeed())
+
+		ctx.Buildpack.Metadata = map[string]interface{}{
+			"dependencies": []map[string]interface{}{
+				{
+					"id":      "tomcat",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat@1.1.1",
+					"cpes":    "cpe:2.3:a:apache:tomcat:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-access-logging-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-access-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-lifecycle-support",
+					"version": "1.1.1",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-lifecycle-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-lifecycle-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+				{
+					"id":      "tomcat-logging-support",
+					"version": "1.1.1",
+					"uri":     "https://example.com/releases/tomcat-logging-support-1.1.1.RELEASE.jar",
+					"stacks":  []interface{}{"test-stack-id"},
+					"purl":    "pkg:generic/tomcat-logging-support@1.1.1",
+					"cpes":    "cpe:2.3:a:cloudfoundry:tomcat-logging-support:1.1.1:*:*:*:*:*:*:*",
+				},
+			},
+		}
+		ctx.StackID = "test-stack-id"
+
+		result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(result.Processes).To(ContainElements(
+			libcnb.Process{Type: "task", Command: "sh", Arguments: []string{"tomcat/bin/catalina.sh", "run"}, Direct: true},
+			libcnb.Process{Type: "tomcat", Command: "sh", Arguments: []string{"tomcat/bin/catalina.sh", "run"}, Direct: true},
+			libcnb.Process{Type: "web", Command: "sh", Arguments: []string{"tomcat/bin/catalina.sh", "run"}, Direct: true, Default: true},
+		))
+
+		Expect(result.Layers).To(HaveLen(3))
+		Expect(result.Layers[0].Name()).To(Equal("tomcat"))
+		Expect(result.Layers[1].Name()).To(Equal("helper"))
+		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"access-logging-support"}))
+		Expect(result.Layers[2].Name()).To(Equal("catalina-base"))
+
+		Expect(result.BOM.Entries).To(HaveLen(5))
+		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
+		Expect(result.BOM.Entries[0].Build).To(BeFalse())
+		Expect(result.BOM.Entries[0].Launch).To(BeTrue())
+		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
+		Expect(result.BOM.Entries[1].Build).To(BeFalse())
+		Expect(result.BOM.Entries[1].Launch).To(BeTrue())
+		Expect(result.BOM.Entries[2].Name).To(Equal("tomcat-access-logging-support"))
+		Expect(result.BOM.Entries[2].Build).To(BeFalse())
+		Expect(result.BOM.Entries[2].Launch).To(BeTrue())
+		Expect(result.BOM.Entries[3].Name).To(Equal("tomcat-lifecycle-support"))
+		Expect(result.BOM.Entries[3].Build).To(BeFalse())
+		Expect(result.BOM.Entries[3].Launch).To(BeTrue())
+		Expect(result.BOM.Entries[4].Name).To(Equal("tomcat-logging-support"))
+		Expect(result.BOM.Entries[4].Build).To(BeFalse())
+		Expect(result.BOM.Entries[4].Launch).To(BeTrue())
+
+		sbomScanner.AssertCalled(t, "ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON)
+	})
+
 }
