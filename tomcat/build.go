@@ -18,7 +18,6 @@ package tomcat
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -32,6 +31,7 @@ import (
 	"github.com/heroku/color"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/apache-tomcat/v7/internal/util"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
@@ -52,7 +52,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return result, nil
 	}
 
-	warFilesExist, _ := b.containsWarFiles(context.Application.Path)
+	warFilesExist, _ := util.ContainsWarFiles(context.Application.Path)
 	if warFilesExist {
 		b.Logger.Infof("%s contains war files.", context.Application.Path)
 	} else {
@@ -222,18 +222,4 @@ func (b Build) tinyStartCommand(homePath, basePath string, loggingDep libpak.Bui
 	b.Logger.Header(color.YellowString("WARNING: Tomcat will run on the Tiny stack which has no shell. Due to this, some configuration options such as `bin/setenv.sh` and setting `CATALINA_*` environment variables, will not be available"))
 
 	return command, arguments
-}
-
-func (b Build) containsWarFiles(dir string) (bool, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return false, err
-	}
-
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), ".war") {
-			return true, nil
-		}
-	}
-	return false, nil
 }

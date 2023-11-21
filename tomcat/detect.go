@@ -18,12 +18,11 @@ package tomcat
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/apache-tomcat/v7/internal/util"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
@@ -54,7 +53,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		return libcnb.DetectResult{Pass: false}, nil
 	}
 
-	warFilesExist, _ := containsWarFiles(context.Application.Path)
+	warFilesExist, _ := util.ContainsWarFiles(context.Application.Path)
 	if !warFilesExist {
 		m, err := libjvm.NewManifest(context.Application.Path)
 		if err != nil {
@@ -96,18 +95,4 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 
 	result.Plans[0].Provides = append(result.Plans[0].Provides, libcnb.BuildPlanProvide{Name: PlanEntryJVMApplicationPackage})
 	return result, nil
-}
-
-func containsWarFiles(dir string) (bool, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return false, err
-	}
-
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), ".war") {
-			return true, nil
-		}
-	}
-	return false, nil
 }
