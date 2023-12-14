@@ -81,16 +81,16 @@ api = "0.7"
     name = "BP_TOMCAT_VERSION"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:8.5.96:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:8.5.97:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@8.5.96"
-    sha256 = "0307cfb85e58a2ff3d033d464bdc01f03fd5452618b17baf64368b1e6b02e886"
-    source = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.96/src/apache-tomcat-8.5.96-src.tar.gz"
-    source-sha256 = "6e436bfa5cdb87d2f67924f170498a78e238511638ad63745bb85e934b0b8d98"
+    purl = "pkg:generic/apache-tomcat@8.5.97"
+    sha256 = "d7ab8493b1deec6514c37e51183f933147a6db5b0798b3f28b3e34c2a63ebf9a"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.97/src/apache-tomcat-8.5.97-src.tar.gz"
+    source-sha256 = "59e1680188e5a2c1f4a9de5a2dd533b6211925a4a1ba4f8eee120d89a7d2b85f"
     stacks = ["*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.96/bin/apache-tomcat-8.5.96.tar.gz"
-    version = "8.5.96"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.97/bin/apache-tomcat-8.5.97.tar.gz"
+    version = "8.5.97"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
