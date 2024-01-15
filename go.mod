@@ -6,7 +6,7 @@ require (
 	github.com/buildpacks/libcnb v1.30.1
 	github.com/heroku/color v0.0.6
 	github.com/onsi/gomega v1.30.0
-	github.com/paketo-buildpacks/libjvm v1.44.0
+	github.com/paketo-buildpacks/libjvm v1.44.1
 	github.com/paketo-buildpacks/libpak v1.68.0
 	github.com/sclevine/spec v1.4.0
 )
@@ -29,8 +29,8 @@ require (
 	github.com/stretchr/objx v0.5.1 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/crypto v0.18.0 // indirect
+	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
