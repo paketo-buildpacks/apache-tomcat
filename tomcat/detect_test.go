@@ -25,7 +25,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
 
-	"github.com/paketo-buildpacks/apache-tomcat/v7/tomcat"
+	"github.com/initializ-buildpacks/apache-tomcat/v7/tomcat"
 )
 
 func testDetect(t *testing.T, context spec.G, it spec.S) {

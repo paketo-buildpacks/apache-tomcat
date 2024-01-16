@@ -7,7 +7,7 @@ codeowners:
   owner: "@paketo-buildpacks/java-maintainers"
 
 package:
-  repositories:   ["docker.io/paketobuildpacks/apache-tomcat","gcr.io/paketo-buildpacks/apache-tomcat"]
+  repositories:   ["docker.io/paketobuildpacks/apache-tomcat","gcr.io/initializ-buildpacks/apache-tomcat"]
   register:       true
   registry_token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
 
