@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/paketo-buildpacks/libpak/sbom"
 
@@ -44,6 +45,7 @@ type Base struct {
 	LifecycleDependency             libpak.BuildpackDependency
 	LoggingDependency               libpak.BuildpackDependency
 	Logger                          bard.Logger
+	WarFilesExist                   bool
 }
 
 func NewBase(
@@ -56,6 +58,7 @@ func NewBase(
 	lifecycleDependency libpak.BuildpackDependency,
 	loggingDependency libpak.BuildpackDependency,
 	cache libpak.DependencyCache,
+	warFilesExist bool,
 ) (Base, []libcnb.BOMEntry) {
 
 	dependencies := []libpak.BuildpackDependency{accessLoggingDependency, lifecycleDependency, loggingDependency}
@@ -79,6 +82,7 @@ func NewBase(
 		}),
 		LifecycleDependency: lifecycleDependency,
 		LoggingDependency:   loggingDependency,
+		WarFilesExist:       warFilesExist,
 	}
 
 	var bomEntries []libcnb.BOMEntry
@@ -163,14 +167,23 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		}
 
 		file = filepath.Join(layer.Path, "webapps")
-		if err := os.MkdirAll(file, 0755); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to create directory %s\n%w", file, err)
-		}
+		if b.WarFilesExist {
+			if err := os.Symlink(b.ApplicationPath, file); err != nil {
+				return libcnb.Layer{}, fmt.Errorf("unable to create symlink from %s to %s\n%w", b.ApplicationPath, file, err)
+			}
+			if err := b.explodeWarFiles(); err != nil {
+				return libcnb.Layer{}, fmt.Errorf("unable to explode war files in %s\n%w", b.ApplicationPath, err)
+			}
+		} else {
+			if err := os.MkdirAll(file, 0755); err != nil {
+				return libcnb.Layer{}, fmt.Errorf("unable to create directory %s\n%w", file, err)
+			}
 
-		file = filepath.Join(layer.Path, "webapps", b.ContextPath)
-		b.Logger.Headerf("Mounting application at %s", b.ContextPath)
-		if err := os.Symlink(b.ApplicationPath, file); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to create symlink from %s to %s\n%w", b.ApplicationPath, file, err)
+			file = filepath.Join(layer.Path, "webapps", b.ContextPath)
+			b.Logger.Headerf("Mounting application at %s", b.ContextPath)
+			if err := os.Symlink(b.ApplicationPath, file); err != nil {
+				return libcnb.Layer{}, fmt.Errorf("unable to create symlink from %s to %s\n%w", b.ApplicationPath, file, err)
+			}
 		}
 
 		environmentPropertySourceDisabled := b.ConfigurationResolver.ResolveBool("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED")
@@ -355,6 +368,40 @@ func (b Base) writeDependencySBOM(layer libcnb.Layer, syftArtifacts []sbom.SyftA
 	b.Logger.Debugf("Writing Syft SBOM at %s: %+v", sbomPath, dep)
 	if err := dep.WriteTo(sbomPath); err != nil {
 		return fmt.Errorf("unable to write SBOM\n%w", err)
+	}
+	return nil
+}
+
+func (b Base) explodeWarFiles() error {
+	warFiles, err := filepath.Glob(filepath.Join(b.ApplicationPath, "*.war"))
+	if err != nil {
+		return err
+	}
+
+	for _, warFilePath := range warFiles {
+		b.Logger.Debugf("Extracting: %s\n", warFilePath)
+
+		if _, err := os.Stat(warFilePath); err == nil {
+			in, err := os.Open(warFilePath)
+			if err != nil {
+				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+			}
+			defer in.Close()
+
+			targetDir := strings.TrimSuffix(warFilePath, filepath.Ext(warFilePath))
+			if err := os.MkdirAll(targetDir, 0755); err != nil {
+				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+			}
+
+			if err := crush.Extract(in, targetDir, 0); err != nil {
+				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+			}
+
+			err = os.Remove(warFilePath)
+			if err != nil {
+				return fmt.Errorf("An error occurred while removing the .war file: %s\n", err)
+			}
+		}
 	}
 	return nil
 }

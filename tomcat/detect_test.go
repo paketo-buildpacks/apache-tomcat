@@ -17,6 +17,7 @@
 package tomcat_test
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -149,6 +150,54 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 		it("fails", func() {
 			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{Pass: false}))
+		})
+	})
+
+	context("Multiple war files found", func() {
+		files := []string{"api.war", "ui.war"}
+
+		it.Before(func() {
+			for _, file := range files {
+				in, err := os.Open(filepath.Join("testdata", "warfiles", file))
+				Expect(err).NotTo(HaveOccurred())
+
+				out, err := os.OpenFile(filepath.Join(ctx.Application.Path, file), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+				Expect(err).NotTo(HaveOccurred())
+
+				_, err = io.Copy(out, in)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(in.Close()).To(Succeed())
+				Expect(out.Close()).To(Succeed())
+			}
+			Expect(os.Setenv("BP_JAVA_APP_SERVER", "tomcat")).To(Succeed())
+		})
+
+		it.After(func() {
+			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
+			for _, file := range files {
+				os.Remove(filepath.Join(ctx.Application.Path, file))
+			}
+		})
+
+		it("contributes Tomcat", func() {
+			Expect(detect.Detect(ctx)).To(Equal(libcnb.DetectResult{
+				Pass: true,
+				Plans: []libcnb.BuildPlan{
+					{
+						Provides: []libcnb.BuildPlanProvide{
+							{Name: "jvm-application"},
+							{Name: "java-app-server"},
+						},
+						Requires: []libcnb.BuildPlanRequire{
+							{Name: "syft"},
+							{Name: "jre", Metadata: map[string]interface{}{"launch": true}},
+							{Name: "jvm-application-package"},
+							{Name: "jvm-application"},
+							{Name: "java-app-server"},
+						},
+					},
+				},
+			}))
 		})
 	})
 }

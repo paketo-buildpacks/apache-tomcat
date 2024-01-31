@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/apache-tomcat/v7/internal/util"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
@@ -52,14 +53,17 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 		return libcnb.DetectResult{Pass: false}, nil
 	}
 
-	m, err := libjvm.NewManifest(context.Application.Path)
-	if err != nil {
-		return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
-	}
+	warFilesExist, _ := util.ContainsWarFiles(context.Application.Path)
+	if !warFilesExist {
+		m, err := libjvm.NewManifest(context.Application.Path)
+		if err != nil {
+			return libcnb.DetectResult{}, fmt.Errorf("unable to read manifest\n%w", err)
+		}
 
-	if _, ok := m.Get("Main-Class"); ok {
-		d.Logger.Info("SKIPPED: Manifest attribute 'Main-Class' was found")
-		return libcnb.DetectResult{Pass: false}, nil
+		if _, ok := m.Get("Main-Class"); ok {
+			d.Logger.Info("SKIPPED: Manifest attribute 'Main-Class' was found")
+			return libcnb.DetectResult{Pass: false}, nil
+		}
 	}
 
 	result := libcnb.DetectResult{

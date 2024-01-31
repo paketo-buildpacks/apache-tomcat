@@ -31,6 +31,7 @@ import (
 	"github.com/heroku/color"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/apache-tomcat/v7/internal/util"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
@@ -51,26 +52,31 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		return result, nil
 	}
 
-	m, err := libjvm.NewManifest(context.Application.Path)
-	if err != nil {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
-	}
-
-	if _, ok := m.Get("Main-Class"); ok {
-		for _, entry := range context.Plan.Entries {
-			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+	warFilesExist, _ := util.ContainsWarFiles(context.Application.Path)
+	if warFilesExist {
+		b.Logger.Infof("%s contains war files.", context.Application.Path)
+	} else {
+		m, err := libjvm.NewManifest(context.Application.Path)
+		if err != nil {
+			return libcnb.BuildResult{}, fmt.Errorf("unable to read manifest\n%w", err)
 		}
-		return result, nil
-	}
 
-	file := filepath.Join(context.Application.Path, "WEB-INF")
-	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
-		return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
-	} else if os.IsNotExist(err) {
-		for _, entry := range context.Plan.Entries {
-			result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+		if _, ok := m.Get("Main-Class"); ok {
+			for _, entry := range context.Plan.Entries {
+				result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+			}
+			return result, nil
 		}
-		return result, nil
+
+		file := filepath.Join(context.Application.Path, "WEB-INF")
+		if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
+			return libcnb.BuildResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
+		} else if os.IsNotExist(err) {
+			for _, entry := range context.Plan.Entries {
+				result.Unmet = append(result.Unmet, libcnb.UnmetPlanEntry{Name: entry.Name})
+			}
+			return result, nil
+		}
 	}
 
 	b.Logger.Title(context.Buildpack)
@@ -144,7 +150,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		}
 	}
 
-	base, bomEntries := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency, externalConfigurationDependency, lifecycleDependency, loggingDependency, dc)
+	base, bomEntries := NewBase(context.Application.Path, context.Buildpack.Path, cr, b.ContextPath(cr), accessLoggingDependency, externalConfigurationDependency, lifecycleDependency, loggingDependency, dc, warFilesExist)
 
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)

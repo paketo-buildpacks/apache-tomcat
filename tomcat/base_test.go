@@ -18,8 +18,10 @@ package tomcat_test
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/buildpacks/libcnb"
@@ -101,6 +103,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 			lifecycleDep,
 			loggingDep,
 			dc,
+			false,
 		)
 
 		Expect(entries).To(HaveLen(3))
@@ -175,7 +178,18 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 
-		contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
+		contrib, entries := tomcat.NewBase(
+			ctx.Application.Path,
+			ctx.Buildpack.Path,
+			libpak.ConfigurationResolver{},
+			"test-context-path",
+			accessLoggingDep,
+			&externalConfigurationDep,
+			lifecycleDep,
+			loggingDep,
+			dc,
+			false,
+		)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -240,7 +254,18 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 			dc := libpak.DependencyCache{CachePath: "testdata"}
 
-			contrib, entries := tomcat.NewBase(ctx.Application.Path, ctx.Buildpack.Path, libpak.ConfigurationResolver{}, "test-context-path", accessLoggingDep, &externalConfigurationDep, lifecycleDep, loggingDep, dc)
+			contrib, entries := tomcat.NewBase(
+				ctx.Application.Path,
+				ctx.Buildpack.Path,
+				libpak.ConfigurationResolver{},
+				"test-context-path",
+				accessLoggingDep,
+				&externalConfigurationDep,
+				lifecycleDep,
+				loggingDep,
+				dc,
+				false,
+			)
 			Expect(entries).To(HaveLen(4))
 			Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
 			Expect(entries[0].Build).To(BeFalse())
@@ -309,6 +334,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 				lifecycleDep,
 				loggingDep,
 				dc,
+				false,
 			)
 
 			Expect(entries).To(HaveLen(3))
@@ -393,6 +419,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 				lifecycleDep,
 				loggingDep,
 				dc,
+				false,
 			)
 
 			Expect(entries).To(HaveLen(3))
@@ -416,6 +443,92 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 				[]byte(fmt.Sprintf(`CLASSPATH="%s:%s"`, filepath.Join(layer.Path, "bin", "stub-tomcat-logging-support.jar"), "/layers/test-buildpack/foo/bar.jar"))))
 		})
 
+	})
+
+	context("Contribute multiple war files", func() {
+		files := []string{"api.war", "ui.war"}
+		it.Before(func() {
+			for _, file := range files {
+				in, err := os.Open(filepath.Join("testdata", "warfiles", file))
+				Expect(err).NotTo(HaveOccurred())
+
+				out, err := os.OpenFile(filepath.Join(ctx.Application.Path, file), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+				Expect(err).NotTo(HaveOccurred())
+
+				_, err = io.Copy(out, in)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(in.Close()).To(Succeed())
+				Expect(out.Close()).To(Succeed())
+			}
+		})
+
+		it.After(func() {
+			for _, file := range files {
+				os.Remove(filepath.Join(ctx.Application.Path, file))
+			}
+		})
+
+		it("Multiple war files have been exploded in application path", func() {
+			accessLoggingDep := libpak.BuildpackDependency{
+				ID:     "tomcat-access-logging-support",
+				URI:    "https://localhost/stub-tomcat-access-logging-support.jar",
+				SHA256: "d723bfe2ba67dfa92b24e3b6c7b2d0e6a963de7313350e306d470e44e330a5d2",
+				PURL:   "pkg:generic/tomcat-access-logging-support@3.3.0",
+				CPEs:   []string{"cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.3.0:*:*:*:*:*:*:*"},
+			}
+			lifecycleDep := libpak.BuildpackDependency{
+				ID:     "tomcat-lifecycle-support",
+				URI:    "https://localhost/stub-tomcat-lifecycle-support.jar",
+				SHA256: "723126712c0b22a7fe409664adf1fbb78cf3040e313a82c06696f5058e190534",
+				PURL:   "pkg:generic/tomcat-lifecycle-support@3.3.0",
+				CPEs:   []string{"cpe:2.3:a:cloudfoundry:tomcat-lifecycle-support:3.3.0:*:*:*:*:*:*:*"},
+			}
+			loggingDep := libpak.BuildpackDependency{
+				ID:     "tomcat-logging-support",
+				URI:    "https://localhost/stub-tomcat-logging-support.jar",
+				SHA256: "e0a7e163cc9f1ffd41c8de3942c7c6b505090b7484c2ba9be846334e31c44a2c",
+				PURL:   "pkg:generic/tomcat-logging-support@3.3.0",
+				CPEs:   []string{"cpe:2.3:a:cloudfoundry:tomcat-logging-support:3.3.0:*:*:*:*:*:*:*"},
+			}
+
+			dc := libpak.DependencyCache{CachePath: "testdata"}
+
+			contributor, entries := tomcat.NewBase(
+				ctx.Application.Path,
+				ctx.Buildpack.Path,
+				libpak.ConfigurationResolver{},
+				"test-context-path",
+				accessLoggingDep,
+				nil,
+				lifecycleDep,
+				loggingDep,
+				dc,
+				true,
+			)
+
+			Expect(entries).To(HaveLen(3))
+			Expect(entries[0].Name).To(Equal("tomcat-access-logging-support"))
+			Expect(entries[0].Build).To(BeFalse())
+			Expect(entries[0].Launch).To(BeTrue())
+			Expect(entries[1].Name).To(Equal("tomcat-lifecycle-support"))
+			Expect(entries[1].Build).To(BeFalse())
+			Expect(entries[1].Launch).To(BeTrue())
+			Expect(entries[2].Name).To(Equal("tomcat-logging-support"))
+			Expect(entries[2].Build).To(BeFalse())
+			Expect(entries[2].Launch).To(BeTrue())
+
+			layer, err := ctx.Layers.Layer("test-layer")
+			Expect(err).NotTo(HaveOccurred())
+
+			layer, err = contributor.Contribute(layer)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(os.Readlink(filepath.Join(layer.Path, "webapps"))).To(Equal(ctx.Application.Path))
+			for _, file := range files {
+				targetDir := strings.TrimSuffix(file, filepath.Ext(file))
+				Expect(filepath.Join(layer.Path, "webapps", targetDir, "META-INF", "MANIFEST.MF")).To(BeARegularFile())
+			}
+		})
 	})
 
 }
