@@ -129,16 +129,16 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:10.1.18:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:10.1.19:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@10.1.18"
-    sha256 = "6da0b4cbd3140e64a8719a2de19c20bf3902d264a142a816ac552ae216ade311"
-    source = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.18/src/apache-tomcat-10.1.18-src.tar.gz"
-    source-sha256 = "cd7cdd2ae143271893e486d6b809c69e4615c556bc9f9e2ebf186c409685545e"
+    purl = "pkg:generic/apache-tomcat@10.1.19"
+    sha256 = "c3ea69d92bcfc3ed792a8d80794acdb856f1c05d8a045e17a71a2588a0c750b7"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.19/src/apache-tomcat-10.1.19-src.tar.gz"
+    source-sha256 = "2b184b82ce8ad45301c0965d69d7e0caf483b12272b43b779149567291de3fd3"
     stacks = ["*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.18/bin/apache-tomcat-10.1.18.tar.gz"
-    version = "10.1.18"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.19/bin/apache-tomcat-10.1.19.tar.gz"
+    version = "10.1.19"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
