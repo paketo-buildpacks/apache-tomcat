@@ -196,9 +196,9 @@ api = "0.7"
   id = "*"
 
 [[targets]]
-arch = "amd64"
-os = "linux"
+  arch = "amd64"
+  os = "linux"
 
 [[targets]]
-arch = "arm64"
-os = "linux"
+  arch = "arm64"
+  os = "linux"
