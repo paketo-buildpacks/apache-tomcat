@@ -3,7 +3,7 @@ module github.com/paketo-buildpacks/apache-tomcat/v7
 go 1.20
 
 require (
-	github.com/buildpacks/libcnb v1.30.1
+	github.com/buildpacks/libcnb v1.30.3
 	github.com/heroku/color v0.0.6
 	github.com/onsi/gomega v1.33.0
 	github.com/paketo-buildpacks/libjvm v1.44.2
