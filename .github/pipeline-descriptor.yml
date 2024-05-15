@@ -23,25 +23,12 @@ docker_credentials:
   password: ${{ secrets.PAKETO_BUILDPACKS_DOCKERHUB_PASSWORD }}
 
 dependencies:
-- name:            Tomcat 8
-  id:              tomcat
-  version_pattern: "8\\.[\\d]+\\.[\\d]+"
-  uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
-  with:
-    uri: https://archive.apache.org/dist/tomcat/tomcat-8
 - name:            Tomcat 9
   id:              tomcat
   version_pattern: "9\\.[\\d]+\\.[\\d]+"
   uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
   with:
     uri: https://archive.apache.org/dist/tomcat/tomcat-9
-- name:            Tomcat 10
-  id:              tomcat
-  version_pattern: "10\\.0\\.[\\d]+"
-  uses:            docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
-  with:
-    uri: https://archive.apache.org/dist/tomcat/tomcat-10
-    version_regex: "(10)\\.(0)\\.([\\d]+)"
 - name:            Tomcat 10.1
   id:              tomcat
   version_pattern: "10\\.1\\.[\\d]+"
