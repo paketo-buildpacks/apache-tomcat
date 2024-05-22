@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
-	"github.com/paketo-buildpacks/apache-tomcat/v7/internal/util"
+	"github.com/paketo-buildpacks/apache-tomcat/v8/internal/util"
 	"github.com/paketo-buildpacks/libjvm"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
