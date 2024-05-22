@@ -1,4 +1,4 @@
-module github.com/paketo-buildpacks/apache-tomcat/v7
+module github.com/paketo-buildpacks/apache-tomcat/v8
 
 go 1.20
 

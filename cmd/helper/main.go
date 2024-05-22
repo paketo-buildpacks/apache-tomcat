@@ -22,7 +22,7 @@ import (
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 
-	"github.com/paketo-buildpacks/apache-tomcat/v7/helper"
+	"github.com/paketo-buildpacks/apache-tomcat/v8/helper"
 )
 
 func main() {
