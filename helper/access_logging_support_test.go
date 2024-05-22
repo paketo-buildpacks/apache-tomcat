@@ -23,7 +23,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/spec"
 
-	"github.com/paketo-buildpacks/apache-tomcat/v7/helper"
+	"github.com/paketo-buildpacks/apache-tomcat/v8/helper"
 )
 
 func testAccessLoggingSupport(t *testing.T, context spec.G, it spec.S) {
