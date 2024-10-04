@@ -50,6 +50,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		sbomScanner = mocks.SBOMScanner{}
 		sbomScanner.On("ScanLaunch", ctx.Application.Path, libcnb.SyftJSON, libcnb.CycloneDXJSON).Return(nil)
 
+		t.Setenv("BP_ARCH", "amd64")
 	})
 
 	it.After(func() {
