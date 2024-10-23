@@ -88,7 +88,7 @@ func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error
 	file := filepath.Join(context.Application.Path, "WEB-INF")
 	if _, err := os.Stat(file); err != nil && !os.IsNotExist(err) {
 		return libcnb.DetectResult{}, fmt.Errorf("unable to stat file %s\n%w", file, err)
-	} else if os.IsNotExist(err) {
+	} else if os.IsNotExist(err) && !warFilesExist {
 		d.Logger.Info("PASSED: a WEB-INF directory was not found, this is normal when building from source")
 		return result, nil
 	}

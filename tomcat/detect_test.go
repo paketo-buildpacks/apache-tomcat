@@ -187,6 +187,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 						Provides: []libcnb.BuildPlanProvide{
 							{Name: "jvm-application"},
 							{Name: "java-app-server"},
+							{Name: "jvm-application-package"},
 						},
 						Requires: []libcnb.BuildPlanRequire{
 							{Name: "syft"},
