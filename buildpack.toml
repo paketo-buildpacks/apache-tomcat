@@ -113,6 +113,23 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
+    cpes = ["cpe:2.3:a:apache:tomcat:11.0.1:*:*:*:*:*:*:*"]
+    id = "tomcat"
+    name = "Apache Tomcat"
+    purl = "pkg:generic/apache-tomcat@11.0.1"
+    sha256 = ""
+    source = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.1/src/apache-tomcat-11.0.1-src.tar.gz"
+    source-sha256 = ""
+    stacks = ["*"]
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.1/bin/apache-tomcat-11.0.1.tar.gz"
+    version = "11.0.1"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2.0"
+      uri = "https://www.apache.org/licenses/"
+
+
+  [[metadata.dependencies]]
     cpes = ["cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.4.0:*:*:*:*:*:*:*"]
     id = "tomcat-access-logging-support"
     name = "Apache Tomcat Access Logging Support"
