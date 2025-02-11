@@ -113,16 +113,16 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:11.0.2:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:11.0.3:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@11.0.2"
-    sha256 = "c1b31a6989d30a7344c1a3655da74679ce9f9b48a271e864647a141de3b78cb8"
-    source = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.2/src/apache-tomcat-11.0.2-src.tar.gz"
-    source-sha256 = "94885a2591a1427dabae36cf2dc8d1839d25b05a3aee32aab9721431f6c1032c"
+    purl = "pkg:generic/apache-tomcat@11.0.3"
+    sha256 = "00a01f9886593859716bc40473db6db9d5c0c3b5569c810898e33d73157aba56"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.3/src/apache-tomcat-11.0.3-src.tar.gz"
+    source-sha256 = "be248ef81ded31ac952307eb199022ccafd4585f7ee4572ddbe041ea5f7f0757"
     stacks = ["*"]
-    uri = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.2/bin/apache-tomcat-11.0.2.tar.gz"
-    version = "11.0.2"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.3/bin/apache-tomcat-11.0.3.tar.gz"
+    version = "11.0.3"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
