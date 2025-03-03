@@ -21,7 +21,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
-	github.com/magiconair/properties v1.8.7 // indirect
+	github.com/magiconair/properties v1.8.9 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-shellwords v1.0.12 // indirect
