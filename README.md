@@ -1,4 +1,7 @@
-# `gcr.io/paketo-buildpacks/apache-tomcat`
+# Paketo Buildpack for Apache Tomcat
+
+## Buildpack ID: `paketo-buildpacks/apache-tomcat`
+## Registry URLs: `docker.io/paketobuildpacks/apache-tomcat`
 
 The Paketo Buildpack for Apache Tomcat is a Cloud Native Buildpack that contributes Apache Tomcat and Process Types for WARs.
 
