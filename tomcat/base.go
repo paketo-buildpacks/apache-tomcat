@@ -17,6 +17,7 @@
 package tomcat
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -186,10 +187,12 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			}
 		}
 
+		catalinaOpts := "-DADD_TO_COMMON_LOADER=${ADD_TO_COMMON_LOADER}"
 		environmentPropertySourceDisabled := b.ConfigurationResolver.ResolveBool("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED")
 		if !environmentPropertySourceDisabled {
-			layer.LaunchEnvironment.Default("CATALINA_OPTS", "-Dorg.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource")
+			catalinaOpts += " -Dorg.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource"
 		}
+		layer.LaunchEnvironment.Default("CATALINA_OPTS", catalinaOpts)
 
 		layer.LaunchEnvironment.Default("CATALINA_BASE", layer.Path)
 		layer.LaunchEnvironment.Default("CATALINA_TMPDIR", "/tmp")
@@ -277,6 +280,26 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	file = filepath.Join(layer.Path, "conf", "web.xml")
 	if err := sherpa.CopyFile(in, file); err != nil {
 		return fmt.Errorf("unable to copy %s to %s\n%w", in.Name(), file, err)
+	}
+
+	if v, ok := b.ConfigurationResolver.Resolve("BP_TOMCAT_VERSION"); ok {
+		version := strings.Split(v, `.`)
+		file = filepath.Join(b.BuildpackPath, "resources", "tomcat"+version[0], "catalina.properties")
+		if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
+			b.Logger.Bodyf("Skipping copying of catalina.properties, %s does not exist", file)
+			return nil
+		}
+		b.Logger.Bodyf("Copying catalina.properties to %s/conf", layer.Path)
+		in, err = os.Open(file)
+		if err != nil {
+			return fmt.Errorf("unable to open %s\n%w", file, err)
+		}
+		defer in.Close()
+
+		file = filepath.Join(layer.Path, "conf", "catalina.properties")
+		if err := sherpa.CopyFile(in, file); err != nil {
+			return fmt.Errorf("unable to copy %s to %s\n%w", in.Name(), file, err)
+		}
 	}
 
 	return nil
