@@ -19,6 +19,8 @@ package tomcat
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"slices"
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak"
@@ -47,9 +49,58 @@ func (h Home) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			return libcnb.Layer{}, fmt.Errorf("unable to expand Tomcat\n%w", err)
 		}
 
+		err := h.relaxPermissions(layer)
+		if err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to relax permissions\n%w", err)
+		}
+
 		layer.LaunchEnvironment.Default("CATALINA_HOME", layer.Path)
 
 		return layer, nil
+	})
+}
+
+type relaxPath struct {
+	path       string
+	extensions []string
+}
+
+func (h Home) relaxPermissions(layer libcnb.Layer) error {
+	relaxPermissions, ok := os.LookupEnv("BP_TOMCAT_RELAX_PERMISSIONS")
+	if ok && relaxPermissions == "true" {
+
+		var relaxPaths = [...]relaxPath{
+			{filepath.Join(layer.Path, "bin"), []string{".sh", ".jar"}},
+			{filepath.Join(layer.Path, "lib"), []string{".jar"}},
+		}
+
+		for _, path := range relaxPaths {
+			err := h.relaxFiles(path.path, path.extensions...)
+			if err != nil {
+				return fmt.Errorf("unable to relax relaxPermissions on %q files\n%w", path.path, err)
+			}
+		}
+
+	}
+	return nil
+}
+
+func (h Home) relaxFiles(workpath string, ext ...string) error {
+	return filepath.Walk(workpath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		if !info.IsDir() && slices.Contains(ext, filepath.Ext(path)) {
+			h.Logger.Bodyf("Relaxing permissions on file: %s", path)
+			err = os.Chmod(path, 0755)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	})
 }
 
