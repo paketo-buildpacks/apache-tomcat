@@ -19,6 +19,7 @@ package tomcat
 import (
 	"errors"
 	"fmt"
+	"github.com/paketo-buildpacks/apache-tomcat/v8/internal/util"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -162,6 +163,10 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			}
 		}
 
+		if err := b.ContributeCatalinaProps(layer); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to contribute configuration\n%w", err)
+		}
+
 		file := filepath.Join(layer.Path, "temp")
 		if err := os.MkdirAll(file, 0700); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to create directory %s\n%w", file, err)
@@ -187,7 +192,7 @@ func (b Base) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 			}
 		}
 
-		catalinaOpts := "-DADD_TO_COMMON_LOADER=${ADD_TO_COMMON_LOADER}"
+		catalinaOpts := "-DBPI_TOMCAT_ADDITIONAL_COMMON_JARS=${BPI_TOMCAT_ADDITIONAL_COMMON_JARS}"
 		environmentPropertySourceDisabled := b.ConfigurationResolver.ResolveBool("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED")
 		if !environmentPropertySourceDisabled {
 			catalinaOpts += " -Dorg.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource"
@@ -282,26 +287,6 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 		return fmt.Errorf("unable to copy %s to %s\n%w", in.Name(), file, err)
 	}
 
-	if v, ok := b.ConfigurationResolver.Resolve("BP_TOMCAT_VERSION"); ok {
-		version := strings.Split(v, `.`)
-		file = filepath.Join(b.BuildpackPath, "resources", "tomcat"+version[0], "catalina.properties")
-		if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
-			b.Logger.Bodyf("Skipping copying of catalina.properties, %s does not exist", file)
-			return nil
-		}
-		b.Logger.Bodyf("Copying catalina.properties to %s/conf", layer.Path)
-		in, err = os.Open(file)
-		if err != nil {
-			return fmt.Errorf("unable to open %s\n%w", file, err)
-		}
-		defer in.Close()
-
-		file = filepath.Join(layer.Path, "conf", "catalina.properties")
-		if err := sherpa.CopyFile(in, file); err != nil {
-			return fmt.Errorf("unable to copy %s to %s\n%w", in.Name(), file, err)
-		}
-	}
-
 	return nil
 }
 
@@ -379,6 +364,34 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 	file = filepath.Join(layer.Path, "bin", "setenv.sh")
 	if err = os.WriteFile(file, []byte(s), 0755); err != nil {
 		return fmt.Errorf("unable to write file %s\n%w", file, err)
+	}
+
+	return nil
+}
+
+func (b Base) ContributeCatalinaProps(layer libcnb.Layer) error {
+	b.Logger.Header(color.BlueString("Tomcat catalina.properties with altered common.loader"))
+
+	homeProps := filepath.Join(layer.Path, "..", "tomcat", "conf", "catalina.properties")
+	baseProps := filepath.Join(layer.Path, "conf", "catalina.properties")
+
+	if _, err := os.Stat(baseProps); errors.Is(err, os.ErrNotExist) {
+		in, err := os.Open(homeProps)
+		if err != nil {
+			b.Logger.Bodyf("Skipping copying of catalina.properties, unable to open %s", homeProps)
+			return nil
+		}
+		defer in.Close()
+
+		b.Logger.Bodyf("Copying catalina.properties to %s/conf", layer.Path)
+		if err := sherpa.CopyFile(in, baseProps); err != nil {
+			return fmt.Errorf("unable to copy %s to %s\n%w", in.Name(), baseProps, err)
+		}
+	}
+
+	b.Logger.Body("Altering catalina.properties common.loader")
+	if err := util.ReplaceInCatalinaProps(baseProps); err != nil {
+		return fmt.Errorf("unable to replace in file %s\n%w", baseProps, err)
 	}
 
 	return nil
