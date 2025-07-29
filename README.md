@@ -48,6 +48,7 @@ When this buildpack runs on the [Tiny stack](https://paketo.io/docs/concepts/sta
 | `$BP_TOMCAT_VERSION`                      | Configure a specific Tomcat version.  This value must _exactly_ match a version available in the buildpack so typically it would configured to a wildcard such as `9.*`.                                                                                   |
 | `BPL_TOMCAT_ACCESS_LOGGING_ENABLED`       | Whether access logging should be activated.  Defaults to inactive.                                                                                                                                                                                         |
 | `BPI_TOMCAT_ADDITIONAL_JARS`              | This should only be used in other buildpacks to include a `jar` to the tomcat classpath. Several `jars` must be separated by `:`. |
+| `BPI_TOMCAT_ADDITIONAL_COMMON_JARS`       | This should be used by other buildpacks to include additional locations to be class loaded by the tomcat common classloader. For example a buildpack might contribute resources in its dedicated layer and add the location with this variable to be classloaded additionally by Tomcat. Both folder paths as well as single `jar` file paths can be specified. |
 
 ### External Configuration Package
 The artifacts that the repository provides must be in TAR format and must follow the Tomcat archive structure:
