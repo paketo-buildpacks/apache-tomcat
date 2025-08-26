@@ -181,7 +181,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(result.BOM.Entries).To(HaveLen(5))
 		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
-		Expect(result.BOM.Entries[0].Build).To(BeFalse())
+		Expect(result.BOM.Entries[0].Build).To(BeTrue())
 		Expect(result.BOM.Entries[0].Launch).To(BeTrue())
 		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
 		Expect(result.BOM.Entries[1].Build).To(BeFalse())
@@ -272,7 +272,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(result.BOM.Entries).To(HaveLen(5))
 		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
-		Expect(result.BOM.Entries[0].Build).To(BeFalse())
+		Expect(result.BOM.Entries[0].Build).To(BeTrue())
 		Expect(result.BOM.Entries[0].Launch).To(BeTrue())
 		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
 		Expect(result.BOM.Entries[1].Build).To(BeFalse())
@@ -515,7 +515,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(result.BOM.Entries).To(HaveLen(5))
 		Expect(result.BOM.Entries[0].Name).To(Equal("tomcat"))
-		Expect(result.BOM.Entries[0].Build).To(BeFalse())
+		Expect(result.BOM.Entries[0].Build).To(BeTrue())
 		Expect(result.BOM.Entries[0].Launch).To(BeTrue())
 		Expect(result.BOM.Entries[1].Name).To(Equal("helper"))
 		Expect(result.BOM.Entries[1].Build).To(BeFalse())
