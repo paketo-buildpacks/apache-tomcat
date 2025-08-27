@@ -33,6 +33,7 @@ type Home struct {
 
 func NewHome(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) (Home, libcnb.BOMEntry) {
 	contrib, entry := libpak.NewDependencyLayer(dependency, cache, libcnb.LayerTypes{
+		Cache:  true,
 		Launch: true,
 	})
 	return Home{LayerContributor: contrib}, entry
