@@ -27,7 +27,7 @@ jobs:
             - id: dependency
               uses: docker://ghcr.io/paketo-buildpacks/actions/tomcat-dependency:main
               with:
-                uri: https://downloads.apache.org/tomcat/tomcat-9/
+                uri: https://downloads.apache.org/tomcat/tomcat-9
             - name: Update Buildpack Dependency
               id: buildpack
               run: |
