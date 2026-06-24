@@ -81,16 +81,16 @@ api = "0.7"
     name = "BP_TOMCAT_VERSION"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:9.0.118:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:tomcat:9.0.119:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
-    purl = "pkg:generic/apache-tomcat@9.0.118"
-    sha256 = "2fd31ef9da9929b878997f731cf25536feac574161c02d9399727471c7c406b2"
-    source = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.118/src/apache-tomcat-9.0.118-src.tar.gz"
-    source-sha256 = "9b7078731fa85ee1afd4755961e7ddc7beb3fe540e25cf3597247f90915fce0e"
+    purl = "pkg:generic/apache-tomcat@9.0.119"
+    sha256 = "bc4fd2fb7040fd2f574fd726e4d0274af0c18cb343c450179c3a63104a971964"
+    source = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.119/src/apache-tomcat-9.0.119-src.tar.gz"
+    source-sha256 = "d651455b03434bed753eb78a6c3bba44d85b03e152da5d1b65f98240a6584bbb"
     stacks = ["*"]
-    uri = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.118/bin/apache-tomcat-9.0.118.tar.gz"
-    version = "9.0.118"
+    uri = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.119/bin/apache-tomcat-9.0.119.tar.gz"
+    version = "9.0.119"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
