@@ -86,10 +86,10 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@9.0.121"
     sha256 = "d1a804502cddfd1c1436c1c37809ed4cb807a9c64a8a35fe1747d3ba9a0edeab"
-    source = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.121/src/apache-tomcat-9.0.121-src.tar.gz"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.121/src/apache-tomcat-9.0.121-src.tar.gz"
     source-sha256 = "caab7385de9e7cc9e5ea7a95412449852c2bb54253377792849881fa133e902c"
     stacks = ["*"]
-    uri = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.121/bin/apache-tomcat-9.0.121.tar.gz"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.121/bin/apache-tomcat-9.0.121.tar.gz"
     version = "9.0.121"
 
     [[metadata.dependencies.licenses]]
@@ -102,10 +102,10 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@10.1.59"
     sha256 = "15e435e8ecafd30e500dec7cd30fc289aed4cd8743db14d55024896be77d9241"
-    source = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.59/src/apache-tomcat-10.1.59-src.tar.gz"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.59/src/apache-tomcat-10.1.59-src.tar.gz"
     source-sha256 = "83dfb12e61fc368272dd93e2f983ead4cf1a37050f2eb56cf285044665ec9c75"
     stacks = ["*"]
-    uri = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.59/bin/apache-tomcat-10.1.59.tar.gz"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.59/bin/apache-tomcat-10.1.59.tar.gz"
     version = "10.1.59"
 
     [[metadata.dependencies.licenses]]
@@ -118,10 +118,10 @@ api = "0.7"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@11.0.25"
     sha256 = "071ae2c6213e3c02c58b8581113b7887a96ef2756439b3c5be36fa6aec350090"
-    source = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.25/src/apache-tomcat-11.0.25-src.tar.gz"
+    source = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.25/src/apache-tomcat-11.0.25-src.tar.gz"
     source-sha256 = "1bc5dfb885f9cd0f86c2538280891dca457522f74cd6c7e0574c7a1b2814ee98"
     stacks = ["*"]
-    uri = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.25/bin/apache-tomcat-11.0.25.tar.gz"
+    uri = "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.25/bin/apache-tomcat-11.0.25.tar.gz"
     version = "11.0.25"
 
     [[metadata.dependencies.licenses]]
