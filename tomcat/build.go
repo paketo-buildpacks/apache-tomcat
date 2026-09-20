@@ -106,12 +106,12 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	home, be := NewHome(tomcatDep, dc)
 	home.Logger = b.Logger
 	result.Layers = append(result.Layers, home)
-	result.BOM.Entries = append(result.BOM.Entries, be)
+	result.BOM.Entries = append(result.BOM.Entries, be) //nolint:staticcheck // hold off on the BOM migration for now
 
-	h, be := libpak.NewHelperLayer(context.Buildpack, "access-logging-support")
+	h, be := libpak.NewHelperLayer(context.Buildpack, "access-logging-support") //nolint:staticcheck // hold off on the BOM migration for now
 	h.Logger = b.Logger
 	result.Layers = append(result.Layers, h)
-	result.BOM.Entries = append(result.BOM.Entries, be)
+	result.BOM.Entries = append(result.BOM.Entries, be) //nolint:staticcheck // hold off on the BOM migration for now
 
 	accessLoggingDependency, err := dr.Resolve("tomcat-access-logging-support", "")
 	if err != nil {
@@ -155,7 +155,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	base.Logger = b.Logger
 	result.Layers = append(result.Layers, base)
 	if bomEntries != nil {
-		result.BOM.Entries = append(result.BOM.Entries, bomEntries...)
+		result.BOM.Entries = append(result.BOM.Entries, bomEntries...) //nolint:staticcheck // hold off on the BOM migration for now
 	}
 
 	command := "sh"

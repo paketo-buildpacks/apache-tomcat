@@ -28,8 +28,8 @@ api = "0.7"
     uri = "https://github.com/paketo-buildpacks/apache-tomcat/blob/main/LICENSE"
 
 [metadata]
-  include-files = ["LICENSE", "NOTICE", "README.md", "linux/amd64/bin/build", "linux/amd64/bin/detect", "linux/amd64/bin/main", "linux/amd64/bin/helper", "linux/arm64/bin/build", "linux/arm64/bin/detect", "linux/arm64/bin/main", "linux/arm64/bin/helper", "buildpack.toml", "resources/context.xml", "resources/logging.properties", "resources/server.xml", "resources/web.xml"]
-  pre-package = "scripts/build.sh"
+  include-files = ["LICENSE", "NOTICE", "README.md", "linux/amd64/bin/build", "linux/amd64/bin/detect", "linux/amd64/bin/run", "linux/amd64/bin/helper", "linux/arm64/bin/build", "linux/arm64/bin/detect", "linux/arm64/bin/run", "linux/arm64/bin/helper", "buildpack.toml", "resources/context.xml", "resources/logging.properties", "resources/server.xml", "resources/web.xml"]
+  pre-package = "scripts/build.sh --target linux/amd64 --target linux/arm64"
 
   [[metadata.configurations]]
     description = "the Tomcat access logging state"
@@ -175,6 +175,36 @@ api = "0.7"
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
       uri = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
+
+  [[metadata.dependency-constraints]]
+    constraint = "9.*.*"
+    id = "tomcat"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "10.1.*"
+    id = "tomcat"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "11.*.*"
+    id = "tomcat"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "*"
+    id = "tomcat-access-logging-support"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "*"
+    id = "tomcat-lifecycle-support"
+    patches = 2
+
+  [[metadata.dependency-constraints]]
+    constraint = "*"
+    id = "tomcat-logging-support"
+    patches = 2
 
 [[stacks]]
   id = "*"
