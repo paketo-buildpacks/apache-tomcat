@@ -32,6 +32,7 @@ import (
 	"github.com/paketo-buildpacks/apache-tomcat/v8/tomcat"
 )
 
+//nolint:staticcheck // hold off on the BOM migration for now
 func testBuild(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect      = NewWithT(t).Expect
@@ -292,11 +293,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	context("$BP_TOMCAT_VERSION", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_TOMCAT_VERSION", "1.1.1")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_VERSION")).To(Succeed())
+			t.Setenv("BP_TOMCAT_VERSION", "1.1.1")
 		})
 
 		it("selects version based on $BP_TOMCAT_VERSION", func() {
@@ -370,13 +367,13 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 				},
 			}
 			ctx.StackID = "test-stack-id"
-
-			t.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")
-			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
-			t.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")
 		})
 
 		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI, $BP_TOMCAT_EXT_CONF_VERSION and $BP_TOMCAT_EXT_CONF_SHA256 are set", func() {
+			t.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
+			t.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")
+
 			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -393,8 +390,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("uses time as version if neither $BP_TOMCAT_EXT_CONF_VERSION nor $BP_TOMCAT_EXT_CONF_SHA256 is provided", func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
 
 			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
@@ -405,7 +401,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI and $BP_TOMCAT_EXT_CONF_VERSION are set", func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_SHA256")).To(Succeed())
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
+			t.Setenv("BP_TOMCAT_EXT_CONF_VERSION", "test-version")
 
 			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
@@ -423,7 +420,8 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("contributes external configuration when $BP_TOMCAT_EXT_CONF_URI and $BP_TOMCAT_EXT_CONF_SHA256 are set", func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_VERSION")).To(Succeed())
+			t.Setenv("BP_TOMCAT_EXT_CONF_SHA256", "test-sha256")
+			t.Setenv("BP_TOMCAT_EXT_CONF_URI", "test-uri")
 
 			result, err := tomcat.Build{SBOMScanner: &sbomScanner}.Build(ctx)
 			Expect(err).NotTo(HaveOccurred())
@@ -448,11 +446,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	context("$BP_TOMCAT_CONTEXT_PATH", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_TOMCAT_CONTEXT_PATH", "/alpha/bravo/")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_CONTEXT_PATH")).To(Succeed())
+			t.Setenv("BP_TOMCAT_CONTEXT_PATH", "/alpha/bravo/")
 		})
 
 		it("returns transformed context path", func() {

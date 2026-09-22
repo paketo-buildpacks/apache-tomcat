@@ -222,11 +222,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 	context("$BP_TOMCAT_EXT_CONF_STRIP", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_TOMCAT_EXT_CONF_STRIP", "1")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_EXT_CONF_STRIP")).To(Succeed())
+			t.Setenv("BP_TOMCAT_EXT_CONF_STRIP", "1")
 		})
 
 		it("contributes custom configuration with directory", func() {
@@ -299,11 +295,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 	context("$BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED", "true")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED")).To(Succeed())
+			t.Setenv("BP_TOMCAT_ENV_PROPERTY_SOURCE_DISABLED", "true")
 		})
 
 		it("environment property source can be disabled", func() {
@@ -473,7 +465,7 @@ func testBase(t *testing.T, context spec.G, it spec.S) {
 
 		it.After(func() {
 			for _, file := range files {
-				os.Remove(filepath.Join(ctx.Application.Path, file))
+				_ = os.Remove(filepath.Join(ctx.Application.Path, file))
 			}
 		})
 

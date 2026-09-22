@@ -110,11 +110,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 	context("BP_JAVA_APP_SERVER is set to `tomcat`", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_JAVA_APP_SERVER", "tomcat")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
+			t.Setenv("BP_JAVA_APP_SERVER", "tomcat")
 		})
 
 		it("contributes Tomcat", func() {
@@ -141,11 +137,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 
 	context("BP_JAVA_APP_SERVER is set to `foo`", func() {
 		it.Before(func() {
-			Expect(os.Setenv("BP_JAVA_APP_SERVER", "foo")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
+			t.Setenv("BP_JAVA_APP_SERVER", "foo")
 		})
 
 		it("fails", func() {
@@ -169,13 +161,12 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 				Expect(in.Close()).To(Succeed())
 				Expect(out.Close()).To(Succeed())
 			}
-			Expect(os.Setenv("BP_JAVA_APP_SERVER", "tomcat")).To(Succeed())
+			t.Setenv("BP_JAVA_APP_SERVER", "tomcat")
 		})
 
 		it.After(func() {
-			Expect(os.Unsetenv("BP_JAVA_APP_SERVER")).To(Succeed())
 			for _, file := range files {
-				os.Remove(filepath.Join(ctx.Application.Path, file))
+				_ = os.Remove(filepath.Join(ctx.Application.Path, file))
 			}
 		})
 

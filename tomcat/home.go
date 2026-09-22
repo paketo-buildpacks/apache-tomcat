@@ -31,8 +31,8 @@ type Home struct {
 	Logger           bard.Logger
 }
 
-func NewHome(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) (Home, libcnb.BOMEntry) {
-	contrib, entry := libpak.NewDependencyLayer(dependency, cache, libcnb.LayerTypes{
+func NewHome(dependency libpak.BuildpackDependency, cache libpak.DependencyCache) (Home, libcnb.BOMEntry) { //nolint:staticcheck // hold off on the BOM migration for now
+	contrib, entry := libpak.NewDependencyLayer(dependency, cache, libcnb.LayerTypes{ //nolint:staticcheck // hold off on the BOM migration for now
 		Cache:  true,
 		Launch: true,
 	})

@@ -61,7 +61,7 @@ func NewBase(
 	loggingDependency libpak.BuildpackDependency,
 	cache libpak.DependencyCache,
 	warFilesExist bool,
-) (Base, []libcnb.BOMEntry) {
+) (Base, []libcnb.BOMEntry) { //nolint:staticcheck // hold off on the BOM migration for now
 
 	dependencies := []libpak.BuildpackDependency{accessLoggingDependency, lifecycleDependency, loggingDependency}
 	if externalConfigurationDependency != nil {
@@ -87,26 +87,26 @@ func NewBase(
 		WarFilesExist:       warFilesExist,
 	}
 
-	var bomEntries []libcnb.BOMEntry
+	var bomEntries []libcnb.BOMEntry //nolint:staticcheck // hold off on the BOM migration for now
 
-	var entry libcnb.BOMEntry
-	entry = accessLoggingDependency.AsBOMEntry()
+	var entry libcnb.BOMEntry                    //nolint:staticcheck // hold off on the BOM migration for now
+	entry = accessLoggingDependency.AsBOMEntry() //nolint:staticcheck // hold off on the BOM migration for now
 	entry.Metadata["layer"] = b.Name()
 	entry.Launch = true
 	bomEntries = append(bomEntries, entry)
 
-	entry = lifecycleDependency.AsBOMEntry()
+	entry = lifecycleDependency.AsBOMEntry() //nolint:staticcheck // hold off on the BOM migration for now
 	entry.Metadata["layer"] = b.Name()
 	entry.Launch = true
 	bomEntries = append(bomEntries, entry)
 
-	entry = loggingDependency.AsBOMEntry()
+	entry = loggingDependency.AsBOMEntry() //nolint:staticcheck // hold off on the BOM migration for now
 	entry.Metadata["layer"] = b.Name()
 	entry.Launch = true
 	bomEntries = append(bomEntries, entry)
 
 	if externalConfigurationDependency != nil {
-		entry = externalConfigurationDependency.AsBOMEntry()
+		entry = externalConfigurationDependency.AsBOMEntry() //nolint:staticcheck // hold off on the BOM migration for now
 		entry.Metadata["layer"] = b.Name()
 		entry.Launch = true
 		bomEntries = append(bomEntries, entry)
@@ -217,7 +217,7 @@ func (b Base) ContributeAccessLogging(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to get dependency %s\n%w", b.AccessLoggingDependency.ID, err)
 	}
-	defer artifact.Close()
+	defer func() { _ = artifact.Close() }()
 
 	b.Logger.Bodyf("Copying to %s/lib", layer.Path)
 
@@ -241,7 +241,7 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to open %s\n%w", file, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	file = filepath.Join(layer.Path, "conf", "context.xml")
 	if err := sherpa.CopyFile(in, file); err != nil {
@@ -254,7 +254,7 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to open %s\n%w", file, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	file = filepath.Join(layer.Path, "conf", "logging.properties")
 	if err := sherpa.CopyFile(in, file); err != nil {
@@ -267,7 +267,7 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to open %s\n%w", file, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	file = filepath.Join(layer.Path, "conf", "server.xml")
 	if err := sherpa.CopyFile(in, file); err != nil {
@@ -280,7 +280,7 @@ func (b Base) ContributeConfiguration(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to open %s\n%w", file, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	file = filepath.Join(layer.Path, "conf", "web.xml")
 	if err := sherpa.CopyFile(in, file); err != nil {
@@ -297,7 +297,7 @@ func (b Base) ContributeExternalConfiguration(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to get dependency %s\n%w", b.ExternalConfigurationDependency.ID, err)
 	}
-	defer artifact.Close()
+	defer func() { _ = artifact.Close() }()
 
 	b.Logger.Bodyf("Expanding to %s", layer.Path)
 
@@ -308,7 +308,7 @@ func (b Base) ContributeExternalConfiguration(layer libcnb.Layer) error {
 		}
 	}
 
-	if err := crush.ExtractTarGz(artifact, layer.Path, c); err != nil {
+	if err := crush.ExtractTarGz(artifact, layer.Path, c); err != nil { //nolint:staticcheck // hold off on the crush migration for now
 		return fmt.Errorf("unable to expand external configuration\n%w", err)
 	}
 
@@ -322,7 +322,7 @@ func (b Base) ContributeLifecycle(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to get dependency %s\n%w", b.LifecycleDependency.ID, err)
 	}
-	defer artifact.Close()
+	defer func() { _ = artifact.Close() }()
 
 	b.Logger.Bodyf("Copying to %s/lib", layer.Path)
 
@@ -341,7 +341,7 @@ func (b Base) ContributeLogging(layer libcnb.Layer) error {
 	if err != nil {
 		return fmt.Errorf("unable to get dependency %s\n%w", b.LoggingDependency.ID, err)
 	}
-	defer artifact.Close()
+	defer func() { _ = artifact.Close() }()
 
 	b.Logger.Bodyf("Copying to %s/bin", layer.Path)
 
@@ -381,7 +381,7 @@ func (b Base) ContributeCatalinaProps(layer libcnb.Layer) error {
 			b.Logger.Bodyf("Skipping copying of catalina.properties, unable to open %s", homeProps)
 			return nil
 		}
-		defer in.Close()
+		defer func() { _ = in.Close() }()
 
 		b.Logger.Bodyf("Copying catalina.properties to %s/conf", layer.Path)
 		if err := sherpa.CopyFile(in, baseProps); err != nil {
@@ -420,22 +420,22 @@ func (b Base) explodeWarFiles() error {
 		if _, err := os.Stat(warFilePath); err == nil {
 			in, err := os.Open(warFilePath)
 			if err != nil {
-				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+				return fmt.Errorf("an error occurred while extracting %s: %s", warFilePath, err)
 			}
-			defer in.Close()
+			defer func() { _ = in.Close() }()
 
 			targetDir := strings.TrimSuffix(warFilePath, filepath.Ext(warFilePath))
 			if err := os.MkdirAll(targetDir, 0755); err != nil {
-				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+				return fmt.Errorf("an error occurred while extracting %s: %s", warFilePath, err)
 			}
 
 			if err := crush.Extract(in, targetDir, 0); err != nil {
-				return fmt.Errorf("An error occurred while extracting %s: %s\n", warFilePath, err)
+				return fmt.Errorf("an error occurred while extracting %s: %s", warFilePath, err)
 			}
 
 			err = os.Remove(warFilePath)
 			if err != nil {
-				return fmt.Errorf("An error occurred while removing the .war file: %s\n", err)
+				return fmt.Errorf("an error occurred while removing the .war file: %s", err)
 			}
 		}
 	}
