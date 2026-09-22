@@ -1,6 +1,6 @@
 module github.com/paketo-buildpacks/apache-tomcat/v8
 
-go 1.27
+go 1.27.1
 
 require (
 	github.com/buildpacks/libcnb v1.30.4
