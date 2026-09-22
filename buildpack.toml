@@ -1,17 +1,3 @@
-# Copyright 2018-2020 the original author or authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 api = "0.7"
 
 [buildpack]
@@ -81,13 +67,11 @@ api = "0.7"
     name = "BP_TOMCAT_VERSION"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:9.0.121:*:*:*:*:*:*:*"]
     id = "tomcat"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@9.0.121"
     sha256 = "d1a804502cddfd1c1436c1c37809ed4cb807a9c64a8a35fe1747d3ba9a0edeab"
     source = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.121/src/apache-tomcat-9.0.121-src.tar.gz"
-    source-sha256 = "caab7385de9e7cc9e5ea7a95412449852c2bb54253377792849881fa133e902c"
     stacks = ["*"]
     uri = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.121/bin/apache-tomcat-9.0.121.tar.gz"
     version = "9.0.121"
@@ -97,13 +81,27 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:10.1.59:*:*:*:*:*:*:*"]
+    checksum = "sha256:d8ec7e512e1450d23bceb14e93ac647ad20524ae8457a6eef529c077f8829890"
+    cpe = "cpe:2.3:a:apache:tomcat:9.0.122:*:*:*:*:*:*:*"
+    id = "tomcat"
+    name = "Apache Tomcat"
+    purl = "pkg:generic/apache-tomcat@9.0.122?checksum=d8ec7e512e1450d23bceb14e93ac647ad20524ae8457a6eef529c077f8829890&download_url=https://downloads.apache.org/tomcat/tomcat-9/v9.0.122/bin/apache-tomcat-9.0.122.tar.gz"
+    source = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.122/src/apache-tomcat-9.0.122-src.tar.gz"
+    source-checksum = "sha256:d620ecdbcc3c6affd9a61227031e8ad1ef045d18249cd904e300815e578aae76"
+    stacks = ["*"]
+    uri = "https://downloads.apache.org/tomcat/tomcat-9/v9.0.122/bin/apache-tomcat-9.0.122.tar.gz"
+    version = "9.0.122"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2.0"
+      uri = "https://www.apache.org/licenses/"
+
+  [[metadata.dependencies]]
     id = "tomcat"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@10.1.59"
     sha256 = "15e435e8ecafd30e500dec7cd30fc289aed4cd8743db14d55024896be77d9241"
     source = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.59/src/apache-tomcat-10.1.59-src.tar.gz"
-    source-sha256 = "83dfb12e61fc368272dd93e2f983ead4cf1a37050f2eb56cf285044665ec9c75"
     stacks = ["*"]
     uri = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.59/bin/apache-tomcat-10.1.59.tar.gz"
     version = "10.1.59"
@@ -113,13 +111,27 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:tomcat:11.0.25:*:*:*:*:*:*:*"]
+    checksum = "sha256:ba8998cb41b3695f3c2d47224c70f44035e9c6385652fdafdb64ac31c354efbd"
+    cpe = "cpe:2.3:a:apache:tomcat:10.1.60:*:*:*:*:*:*:*"
+    id = "tomcat"
+    name = "Apache Tomcat"
+    purl = "pkg:generic/apache-tomcat@10.1.60?checksum=ba8998cb41b3695f3c2d47224c70f44035e9c6385652fdafdb64ac31c354efbd&download_url=https://downloads.apache.org/tomcat/tomcat-10/v10.1.60/bin/apache-tomcat-10.1.60.tar.gz"
+    source = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.60/src/apache-tomcat-10.1.60-src.tar.gz"
+    source-checksum = "sha256:e0da0cc9e2bb5f205712f0a19407ae1391e8d2ef6197fd599e4be848a3d8ee76"
+    stacks = ["*"]
+    uri = "https://downloads.apache.org/tomcat/tomcat-10/v10.1.60/bin/apache-tomcat-10.1.60.tar.gz"
+    version = "10.1.60"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2.0"
+      uri = "https://www.apache.org/licenses/"
+
+  [[metadata.dependencies]]
     id = "tomcat"
     name = "Apache Tomcat"
     purl = "pkg:generic/apache-tomcat@11.0.25"
     sha256 = "071ae2c6213e3c02c58b8581113b7887a96ef2756439b3c5be36fa6aec350090"
     source = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.25/src/apache-tomcat-11.0.25-src.tar.gz"
-    source-sha256 = "1bc5dfb885f9cd0f86c2538280891dca457522f74cd6c7e0574c7a1b2814ee98"
     stacks = ["*"]
     uri = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.25/bin/apache-tomcat-11.0.25.tar.gz"
     version = "11.0.25"
@@ -129,13 +141,27 @@ api = "0.7"
       uri = "https://www.apache.org/licenses/"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:cloudfoundry:tomcat-access-logging-support:3.4.0:*:*:*:*:*:*:*"]
+    checksum = "sha256:6b6ac79c15707d1d2bf54c698b1a19c046c21a56fc8ddf82a0845cc54df68324"
+    cpe = "cpe:2.3:a:apache:tomcat:11.0.26:*:*:*:*:*:*:*"
+    id = "tomcat"
+    name = "Apache Tomcat"
+    purl = "pkg:generic/apache-tomcat@11.0.26?checksum=6b6ac79c15707d1d2bf54c698b1a19c046c21a56fc8ddf82a0845cc54df68324&download_url=https://downloads.apache.org/tomcat/tomcat-11/v11.0.26/bin/apache-tomcat-11.0.26.tar.gz"
+    source = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.26/src/apache-tomcat-11.0.26-src.tar.gz"
+    source-checksum = "sha256:9c9d7006faa69f3e7cf653ae6fc4e0e1d1fd52fe269df7eb38ac0a631236beb1"
+    stacks = ["*"]
+    uri = "https://downloads.apache.org/tomcat/tomcat-11/v11.0.26/bin/apache-tomcat-11.0.26.tar.gz"
+    version = "11.0.26"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2.0"
+      uri = "https://www.apache.org/licenses/"
+
+  [[metadata.dependencies]]
     id = "tomcat-access-logging-support"
     name = "Apache Tomcat Access Logging Support"
     purl = "pkg:generic/tomcat-access-logging-support@3.4.0"
     sha256 = "b3452d5ffbf0652e0f44958a5cb306a961906280102e5fa1a15840d2ddb6bcc1"
     source = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-access-logging-support/3.4.0.RELEASE/tomcat-access-logging-support-3.4.0.RELEASE-sources.jar"
-    source-sha256 = "857098bf8f03c38270403b91489346a13c997dcbf466de15da33f4a370e00a10"
     stacks = ["*"]
     uri = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-access-logging-support/3.4.0.RELEASE/tomcat-access-logging-support-3.4.0.RELEASE.jar"
     version = "3.4.0"
@@ -145,13 +171,11 @@ api = "0.7"
       uri = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:cloudfoundry:tomcat-lifecycle-support:3.4.0:*:*:*:*:*:*:*"]
     id = "tomcat-lifecycle-support"
     name = "Apache Tomcat Lifecycle Support"
     purl = "pkg:generic/tomcat-lifecycle-support@3.4.0"
     sha256 = "3861d32a91b58302fa936d6f84354e1874f71e59dd97b003efcc992a5a6f3c47"
     source = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-lifecycle-support/3.4.0.RELEASE/tomcat-lifecycle-support-3.4.0.RELEASE-sources.jar"
-    source-sha256 = "a07fe091b4159825e1150249ad325f4ac018976b4c05ebc0e47b3e9bf021035e"
     stacks = ["*"]
     uri = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-lifecycle-support/3.4.0.RELEASE/tomcat-lifecycle-support-3.4.0.RELEASE.jar"
     version = "3.4.0"
@@ -161,13 +185,11 @@ api = "0.7"
       uri = "https://github.com/cloudfoundry/java-buildpack-support/blob/main/LICENSE"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:cloudfoundry:tomcat-logging-support:3.4.0:*:*:*:*:*:*:*"]
     id = "tomcat-logging-support"
     name = "Apache Tomcat Logging Support"
     purl = "pkg:generic/tomcat-logging-support@3.4.0"
     sha256 = "07de9efe8dda4c67dec6183ec1d59953abf1372cd71fe276fc4598739bd70667"
     source = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-logging-support/3.4.0.RELEASE/tomcat-logging-support-3.4.0.RELEASE-sources.jar"
-    source-sha256 = "6f7e95e8d3b00b91e8266e683dc3b34d60b7687ec8a6ae10687daa43c94cf94d"
     stacks = ["*"]
     uri = "https://repo1.maven.org/maven2/org/cloudfoundry/tomcat-logging-support/3.4.0.RELEASE/tomcat-logging-support-3.4.0.RELEASE.jar"
     version = "3.4.0"
